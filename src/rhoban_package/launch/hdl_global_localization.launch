@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- load params -->
+  <rosparam command="load" file="$(find rhoban_package)/config/general_config.yaml" ns="/hdl_global_localization" />
+  <rosparam command="load" file="$(find rhoban_package)/config/bbs_config.yaml" ns="/hdl_global_localization" />
+  <rosparam command="load" file="$(find rhoban_package)/config/fpfh_config.yaml" ns="/hdl_global_localization" />
+  <rosparam command="load" file="$(find rhoban_package)/config/ransac_config.yaml" ns="/hdl_global_localization" />
+  <rosparam command="load" file="$(find rhoban_package)/config/teaser_config.yaml" ns="/hdl_global_localization" />
+
+  <node pkg="hdl_global_localization" type="hdl_global_localization_node" name="hdl_global_localization" output="screen" />
+</launch>

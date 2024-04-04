@@ -1,0 +1,18 @@
+[submodule "src/fast_gicp"]
+	path = src/fast_gicp
+	url = git@github.com:SMRT-AIST/fast_gicp.git
+[submodule "src/hdl_graph_slam"]
+	path = src/hdl_graph_slam
+	url = git@github.com:koide3/hdl_graph_slam.git
+[submodule "src/hdl_global_localization"]
+	path = src/hdl_global_localization
+	url = git@github.com:koide3/hdl_global_localization.git
+[submodule "src/hdl_localization"]
+	path = src/hdl_localization
+	url = git@github.com:koide3/hdl_localization.git
+[submodule "src/ndt_omp"]
+	path = src/ndt_omp
+	url = git@github.com:koide3/ndt_omp.git
+[submodule "src/realsense-ros"]
+	path = src/realsense-ros
+	url = git@github.com:IntelRealSense/realsense-ros.git

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="map_path" default="$(find rhoban_package)/maps/HDL/map.pcd" />
+
+
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find rhoban_package)/rviz/loc_map.rviz"/>
+  <param name="/use_sim_time" value="true"/>
+
+  <include file="$(find rhoban_package)/launch/localization_3D.launch">
+    <arg name="points_topic" default="/hdl_graph_slam/map_points" />
+    <arg name="map_path" default="$(arg map_path)" />
+    <arg name="nodelet_manager" default="velodyne_nodelet_manager" />
+    <arg name="rviz_on" value="false"/>
+    <arg name="sim_on" value="true"/>
+  </include>
+
+  <include file="$(find rhoban_package)/launch/slam_3D.launch">
+    <arg name="rviz_on" value="false"/>
+    <arg name="sim_on" value="true"/>
+  </include>
+
+
+</launch>
