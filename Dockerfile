@@ -5,7 +5,7 @@ FROM $FROM_IMAGE AS cacher
 ARG WORKSPACE
 
 WORKDIR $WORKSPACE/src
-COPY rr100_ws/src .
+COPY src .
 
 WORKDIR /opt
 RUN mkdir -p /tmp/opt && \
@@ -40,3 +40,4 @@ COPY --from=cacher $WORKSPACE/src ./src
 RUN . /opt/ros/${ROS_DISTRO}/setup.sh && catkin_make
 
 ENV ROS_MASTER_URI=http://rr-100-07:11311
+ENV ROS_IP=192.168.1.241

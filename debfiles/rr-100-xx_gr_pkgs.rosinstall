@@ -1,0 +1,48 @@
+- git:
+    local-name: rr100
+    uri: git@gitlabholder.generation-robots.com:OMBRE/ROBOTS/rr100/rr100.git
+    version: 96914b1376ff2c75b49a5e95e42a62461568510c
+- git:
+    local-name: teleop_twist_joy
+    uri: git@gitlabholder.generation-robots.com:OMBRE/DEVICES/teleop_twist_joy.git
+    version: 1b34c77628d907a83b1e2466cfa9a8ea950bd861
+- git:
+    local-name: ublox
+    uri: git@gitlabholder.GENERATION-ROBOTS.COM:OMBRE/DEVICES/ublox.git
+    version: 99253beba7fc5ab46c81b05101d5e96945799408
+- git:
+    local-name: realsense-ros
+    uri: git@gitlabholder.GENERATION-ROBOTS.COM:OMBRE/DEVICES/realsense-ros.git
+    version: 5208fff2e2687ed24db49fa9efbb30ebada634a5
+- git:
+    local-name: ros_rslidar
+    uri: git@gitlabholder.GENERATION-ROBOTS.COM:OMBRE/DEVICES/ros_rslidar.git
+    version: 64acf1d4a3c9d5192e0d62b69360945bc32e136a
+- git:
+    local-name: robot_upstart
+    uri: git@gitlabholder.GENERATION-ROBOTS.COM:ROS/robot_upstart.git
+    version: 0f1c696d837ac15b7e0d4436032020e899d5108e
+- git:
+    local-name: rr100_configuration
+    uri: git@gitlabholder.generation-robots.com:OMBRE/ROBOTS/rr100/rr100_configuration.git
+    version: bd486040be879a6ad672943825d09475319ae081
+- git:
+    local-name: rr100_router
+    uri: git@gitlabholder.generation-robots.com:OMBRE/ROBOTS/rr100/rr100_router.git
+    version: f1c0cb3768278e96ef017fe06f002a87a8efdee8
+- git:
+    local-name: rr100_sim
+    uri: git@gitlabholder.generation-robots.com:OMBRE/ROBOTS/rr100/rr100_sim.git
+    version: 62edc5d206e484665478a2ed215ed8d19449ff54
+- git:
+    local-name: four_wheel_steering_controller
+    uri: git@gitlabholder.GENERATION-ROBOTS.COM:OMBRE/ROBOTS/CERBERE/four_wheel_steering_controller.git
+    version: 9308466e85306725a6e3ef70b29c0ded7b8b8e36
+- git:
+    local-name: gr_tf2_static_broadcaster
+    uri: git@gitlabholder.GENERATION-ROBOTS.COM:ROS/gr_tf2_static_broadcaster.git
+    version: 4e9d754a9b853d7fa34bf0bddee6f30c75d80dfd
+- git:
+    local-name: um7
+    uri: git@gitlabholder.GENERATION-ROBOTS.COM:ROS/um7.git
+    version: e737cf361d1a10ccec85f5cd1eb981a7c3916d26
