@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+
+<launch>
+
+  <arg name="realsense_enabled" default="true"/>
+  <arg name="gps_enabled" default="false"/>
+  <arg name="rslidar_enabled" default="true"/>
+
+  <include file="$(find rho_rr100_gazebo)/launch/playpen.launch" />
+
+  <include file="$(find rho_rr100_gazebo)/launch/spawn_rr100.launch">
+    <arg name="realsense_enabled" value="$(arg realsense_enabled)"/>
+    <arg name="gps_enabled" value="$(arg gps_enabled)"/>
+  	<arg name="rslidar_enabled" value="$(arg rslidar_enabled)"/>
+  </include>
+
+</launch>
