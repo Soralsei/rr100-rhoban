@@ -1,13 +1,16 @@
 <?xml version="1.0"?>
 <launch>
 
+  <arg name="debug" default="true"/>
+  <arg name="verbose" default="true"/>
+
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(find rho_rr100_gazebo)/worlds/gr_playpen.world"/>
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
     <arg name="gui" value="true"/>
-    <arg name="headless" value="false"/>
-    <arg name="debug" value="false"/>
+    <arg name="debug" value="$(arg debug)"/>
+    <arg name="verbose" value="$(arg verbose)"/>
   </include>
 
 </launch>

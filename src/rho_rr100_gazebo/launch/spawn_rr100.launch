@@ -3,7 +3,7 @@
 
 <launch>
 
-  <arg name="robot_namespace" default="rr100"/>
+  <arg name="robot_namespace" default="/"/>
 
   <arg name="x" default="0.0"/>
   <arg name="y" default="0.0"/>
@@ -13,6 +13,7 @@
   <arg name="realsense_enabled" default="false"/>
   <arg name="gps_enabled" default="false"/>
   <arg name="rslidar_enabled" default="false"/>
+  <arg name="realsense_laserscan" default="false" doc="Convert realsense point cloud to laser scan"/>
   <!-- <arg name="pan_tilt_enabled" default="false"/>
   <arg name="thermal_camera_enabled" default="false"/> -->
 
@@ -32,11 +33,10 @@
     <include file="$(find rr100_control)/launch/control.launch"/>
     <!-- <include if="$(arg pan_tilt_enabled )" file="$(find pan_tilt1010rs)/launch/component_control_simulation.launch"/> -->
 
-    <group if="$(arg realsense_enabled)">
+    <group if="$(eval arg('realsense_enabled') and arg('realsense_laserscan'))">
 
       <!-- Include poincloud_to_laserscan if simulated realsense is attached -->
-      <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan" output="screen">
-
+      <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="realsense_to_laserscan" output="screen">
           <remap from="cloud_in" to="camera/depth/points"/>
           <remap from="scan" to="scan/realsense"/>
           <rosparam command="load" file="$(find rho_rr100_gazebo)/config/pc_to_ls.yaml"/>

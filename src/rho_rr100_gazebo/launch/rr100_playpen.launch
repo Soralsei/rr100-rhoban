@@ -3,16 +3,26 @@
 
 <launch>
 
-  <arg name="realsense_enabled" default="true"/>
-  <arg name="gps_enabled" default="false"/>
-  <arg name="rslidar_enabled" default="true"/>
+  <arg name="realsense_enabled" default="true" />
+  <arg name="gps_enabled" default="false" />
+  <arg name="rslidar_enabled" default="true" />
 
-  <include file="$(find rho_rr100_gazebo)/launch/playpen.launch" />
+  <arg name="realsense_laserscan" default="false" doc="Convert realsense point cloud to laser scan" />
+
+  <arg name="debug" default="false" />
+  <arg name="verbose" default="true" />
+
+  <include file="$(find rho_rr100_gazebo)/launch/playpen.launch">
+    <arg name="debug" value="$(arg debug)" />
+    <arg name="verbose" value="$(arg verbose)" />
+  </include>
 
   <include file="$(find rho_rr100_gazebo)/launch/spawn_rr100.launch">
-    <arg name="realsense_enabled" value="$(arg realsense_enabled)"/>
-    <arg name="gps_enabled" value="$(arg gps_enabled)"/>
-  	<arg name="rslidar_enabled" value="$(arg rslidar_enabled)"/>
+    <arg name="realsense_enabled" value="$(arg realsense_enabled)" />
+    <arg name="gps_enabled" value="$(arg gps_enabled)" />
+    <arg name="rslidar_enabled" value="$(arg rslidar_enabled)" />
+    <arg name="realsense_laserscan" value="$(arg realsense_laserscan)"
+      doc="Convert realsense point cloud to laser scan" />
   </include>
 
 </launch>

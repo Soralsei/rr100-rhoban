@@ -20,4 +20,5 @@
 	path = src/robosense_simulator
 	url = https://github.com/tomlogan501/robosense_simulator.git
 [submodule "src/realsense_gazebo_plugin/"]
+	path = src/realsense_gazebo_plugin
 	url = https://github.com/Soralsei/realsense_gazebo_plugin.git
