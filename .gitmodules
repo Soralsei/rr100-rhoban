@@ -16,3 +16,8 @@
 [submodule "src/realsense-ros"]
 	path = src/realsense-ros
 	url = https://github.com/IntelRealSense/realsense-ros.git
+[submodule "src/robosense_simulator"]
+	path = src/robosense_simulator
+	url = https://github.com/tomlogan501/robosense_simulator.git
+[submodule "src/realsense_gazebo_plugin/"]
+	url = https://github.com/Soralsei/realsense_gazebo_plugin.git

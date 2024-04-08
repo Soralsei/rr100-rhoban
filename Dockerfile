@@ -39,12 +39,18 @@ RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
     && rosdep install -r -y --from-paths ./src --ignore-src --rosdistro ${ROS_DISTRO}
 
 COPY --from=cacher $WORKSPACE/src ./src
-RUN . /opt/ros/${ROS_DISTRO}/setup.sh && catkin_make
+RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
+    && catkin_make --only-pkg-with-deps fast_gicp hdl_global_localization \
+        hdl_graph_slam hdl_localization ndt_omp \
+        realsense_gazebo_plugin realsense-ros robosense_simulator
+
+RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
+    && catkin_make --only-pkg-with-deps rho_rr100_gazebo rhoban_package
 
 FROM builder as simulation
 RUN --mount=type=cache,target=/var/cache/apt \
     apt-get update && apt-get install -y --no-install-recommends \
-    vim
+    vim gdb valgrind
 #     ros-${ROS_DISTRO}-interactive-marker-twist-server \
 #     ros-${ROS_DISTRO}-twist-mux
     # ros-${ROS_DISTRO}-four-wheel-steering-controller

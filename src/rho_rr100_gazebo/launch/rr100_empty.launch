@@ -11,13 +11,14 @@
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
         <arg name="use_sim_time" value="true"/>
         <arg name="gui" value="$(arg use_gui)"/>
+        <arg name="debug" value="true"/>
+        <arg name="verbose" value="true"/>
     </include>
 
   <include file="$(find rho_rr100_gazebo)/launch/spawn_rr100.launch">
     <arg name="realsense_enabled" value="$(arg realsense_enabled)"/>
     <arg name="gps_enabled" value="$(arg gps_enabled)"/>
   	<arg name="rslidar_enabled" value="$(arg rslidar_enabled)"/>
-
   </include>
 
 </launch>
