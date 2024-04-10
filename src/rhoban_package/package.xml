@@ -65,6 +65,12 @@
   <depend>hector_geotiff</depend>
   <depend>hector_trajectory_server</depend>
 
+  <!-- For odometry transform broadcasting -->
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>nav_msgs</depend>
+  <depend>geometry_msgs</depend>
+
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- Other tools can request additional information be placed here -->
