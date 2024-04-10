@@ -23,3 +23,6 @@
 [submodule "src/realsense_gazebo_plugin/"]
 	path = src/realsense_gazebo_plugin
 	url = https://github.com/Soralsei/realsense_gazebo_plugin.git
+[submodule "src/rslidar_laserscan"]
+	path = src/rslidar_laserscan
+	url = https://github.com/RoboSense-LiDAR/rslidar_laserscan.git

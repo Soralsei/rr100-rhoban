@@ -39,7 +39,7 @@
       <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="realsense_to_laserscan" output="screen">
           <remap from="cloud_in" to="camera/depth/points"/>
           <remap from="scan" to="scan/realsense"/>
-          <rosparam command="load" file="$(find rho_rr100_gazebo)/config/pc_to_ls.yaml"/>
+          <rosparam command="load" file="$(find rr100_gazebo)/config/pc_to_ls.yaml"/>
       </node>
 
     </group>

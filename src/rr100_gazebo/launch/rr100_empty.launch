@@ -6,18 +6,21 @@
   <arg name="realsense_enabled" default="true" />
   <arg name="gps_enabled" default="false" />
   <arg name="rslidar_enabled" default="true" />
+  <arg name="use_gui" default="true" />
 
   <arg name="realsense_laserscan" default="false" doc="Convert realsense point cloud to laser scan" />
 
   <arg name="debug" default="false" />
   <arg name="verbose" default="true" />
 
-  <include file="$(find rho_rr100_gazebo)/launch/playpen.launch">
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="use_sim_time" value="true" />
+    <arg name="gui" value="$(arg use_gui)" />
     <arg name="debug" value="$(arg debug)" />
     <arg name="verbose" value="$(arg verbose)" />
   </include>
 
-  <include file="$(find rho_rr100_gazebo)/launch/spawn_rr100.launch">
+  <include file="$(find rr100_gazebo)/launch/spawn_rr100.launch">
     <arg name="realsense_enabled" value="$(arg realsense_enabled)" />
     <arg name="gps_enabled" value="$(arg gps_enabled)" />
     <arg name="rslidar_enabled" value="$(arg rslidar_enabled)" />
