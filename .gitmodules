@@ -15,10 +15,11 @@
 	url = https://github.com/koide3/ndt_omp.git
 [submodule "src/realsense-ros"]
 	path = src/realsense-ros
-	url = https://github.com/IntelRealSense/realsense-ros.git
+	url = https://github.com/Soralsei/realsense-ros.git
 [submodule "src/robosense_simulator"]
 	path = src/robosense_simulator
 	url = https://github.com/tomlogan501/robosense_simulator.git
+	branch = rr100
 [submodule "src/realsense_gazebo_plugin/"]
 	path = src/realsense_gazebo_plugin
 	url = https://github.com/Soralsei/realsense_gazebo_plugin.git

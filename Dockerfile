@@ -70,7 +70,7 @@ RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
 COPY --from=cacher $WORKSPACE/src/ ./src
 RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
     && rm -rf src/dependencies \
-    && catkin_make
+    && catkin_make --use-ninja
 
 FROM builder as simulation
 RUN --mount=type=cache,target=/var/cache/apt \
