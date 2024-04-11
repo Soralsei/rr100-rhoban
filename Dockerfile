@@ -33,7 +33,7 @@ RUN mkdir -p /tmp/opt && \
 ## Should find better way to partition everything
 WORKDIR $WORKSPACE/src
 RUN mkdir ../dependencies \
-    && ls | grep -v 'rho' | grep -v 'gazebo\|simulator\|CMake' | xargs mv -t ../dependencies \
+    && ls | grep -v 'rhoban\|rr100\|simulator\|CMake' | xargs mv -t ../dependencies \
     && mv ../dependencies .
 RUN mkdir ../packages \
     && ls | grep -v 'dependencies\|gazebo\|simulator\|CMake' | xargs mv -t ../packages \
@@ -62,13 +62,12 @@ RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
     && rosdep update \
     && rosdep install -r -y --from-paths ./src --ignore-src --rosdistro ${ROS_DISTRO} \
     && src/cartographer/scripts/install_abseil.sh \
-    && . /opt/ros/${ROS_DISTRO}/setup.sh \
     # Unecesssary ? && apt-get remove ros-${ROS_DISTRO}-abseil-cpp \
     && catkin_make_isolated --install --use-ninja
 
 WORKDIR ${WORKSPACE}
 COPY --from=cacher /tmp/$WORKSPACE/src ./src
-RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
+RUN . ${CARTOGRAPHER_WS}/devel_isolated/setup.sh \
     && rosdep update \
     && rosdep install -r -y --from-paths ./src --ignore-src --rosdistro ${ROS_DISTRO}
 # Install RR100 ros package dependencies
@@ -81,12 +80,12 @@ RUN mv CMakeLists.txt src \
     && cp -r dependencies/* packages/* simulation/* src
 
 # Compile dependencies as separate layer for better cache
-RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
+RUN . ${CARTOGRAPHER_WS}/devel_isolated/setup.sh \
     && ls dependencies | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
     && rm -rf dependencies
 
 # COPY src/packages src
-RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
+RUN . ${CARTOGRAPHER_WS}/devel_isolated/setup.sh \
     && ls packages | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
     && rm -rf packages
 
@@ -98,7 +97,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
     apt-get update && apt-get install -y --no-install-recommends \
     ignition-citadel vim gdb
 
-RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
+RUN . ${CARTOGRAPHER_WS}/devel_isolated/setup.sh \
     && ls simulation | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
     && rm -rf simulation
 

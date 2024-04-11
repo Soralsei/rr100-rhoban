@@ -1,0 +1,56 @@
+<!--
+  Copyright 2016 The Cartographer Authors
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<launch>
+    <arg name="laserscan_topic" default="rslidar_laserscan"
+        doc="The topic in which the LiDAR laserscan data is published" />
+    <arg name="pointcloud_topic" default="rslidar_points"
+        doc="The topic in which the LiDAR pointcloud data is published" />
+    <arg name="imu_topic" default="imu/data" doc="The topic in which the IMU data is published" />
+    <arg name="odom_topic" default="rr100_steering_controller/odom"
+        doc="The topic in which the robot's odometry data is published" />
+
+    <arg name="gps_enabled" default="false"/>
+    <arg name="gps_topic" default="rr100_steering_controller/odom"
+        doc="The topic in which the robot's odometry data is published" if="$(arg gps_enabled)"/>
+
+    <arg name="simulated" default="false" doc="Whether the robot is simulated" />
+    <arg name="use_rviz" default="true" />
+
+    <param name="/use_sim_time" value="$(arg simulated)" />
+
+    <arg name="configuration_name" value="rr100_cartographer" if="$(arg gps_enabled)"/>
+    <arg name="configuration_name" value="rr100_cartographer_nogps" unless="$(arg gps_enabled)"/>
+
+    <node name="cartographer_node" pkg="cartographer_ros"
+        type="cartographer_node"
+        args="
+            -configuration_directory $(find rr100_slam)/config
+            -configuration_basename $(arg configuration_name).lua"
+        output="screen">
+        <remap from="scan" to="$(arg laserscan_topic)" />
+        <remap from="points2" to="$(arg pointcloud_topic)" />
+        <remap from="imu" to="$(arg imu_topic)" />
+        <remap from="odom" to="$(arg odom_topic)" />
+        <remap from="fix" to="$(arg gps_topic)" />
+    </node>
+
+    <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
+        type="cartographer_occupancy_grid_node" args="-resolution 0.05" />
+
+    <node name="rviz" type="rviz" pkg="rviz" args="-d $(find cartographer_ros)/configuration_files/demo_2d.rviz"
+        if="$(arg use_rviz)" />
+</launch>

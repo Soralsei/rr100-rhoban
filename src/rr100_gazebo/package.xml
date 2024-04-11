@@ -27,7 +27,8 @@
   <exec_depend>hector_gazebo_plugins</exec_depend>
   <exec_depend>rr100_control</exec_depend>
   <exec_depend>rr100_description</exec_depend>
-  <exec_depend>multimaster_launch</exec_depend>
+  <exec_depend>joint_state_controller</exec_depend>
+  <!-- <exec_depend>multimaster_launch</exec_depend> -->
   <exec_depend>pointcloud_to_laserscan</exec_depend>
   <exec_depend>rostopic</exec_depend>
 

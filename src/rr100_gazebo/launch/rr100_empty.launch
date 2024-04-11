@@ -3,10 +3,10 @@
 
 <launch>
 
-  <arg name="realsense_enabled" default="true" />
-  <arg name="gps_enabled" default="false" />
-  <arg name="rslidar_enabled" default="true" />
-  <arg name="use_gui" default="true" />
+  <arg name="realsense_enabled" default="true" doc="Enable the intel realsense camera of the RR100"/>
+  <arg name="gps_enabled" default="false" doc="Enable the GPS module of the RR100"/>
+  <arg name="rslidar_enabled" default="true" doc="Enable the Robosense LiDAR of the RR100"/>
+  <arg name="use_gui" default="true" doc="Launch with the gazebo GUI"/>
 
   <arg name="realsense_laserscan" default="false" doc="Convert realsense point cloud to laser scan" />
 
@@ -24,8 +24,7 @@
     <arg name="realsense_enabled" value="$(arg realsense_enabled)" />
     <arg name="gps_enabled" value="$(arg gps_enabled)" />
     <arg name="rslidar_enabled" value="$(arg rslidar_enabled)" />
-    <arg name="realsense_laserscan" value="$(arg realsense_laserscan)"
-      doc="Convert realsense point cloud to laser scan" />
+    <arg name="realsense_laserscan" value="$(arg realsense_laserscan)" />
   </include>
 
 </launch>
