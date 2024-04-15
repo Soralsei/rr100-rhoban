@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="use_static_map" default="true" />
+
+    <node name="move_base_rr100" type="move_base" pkg="move_base" output="screen">
+
+        <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+        <rosparam file="$(find rr100_navigation)/config/local_planner.yaml" command="load" />
+
+        <!-- observation sources located in costmap_common.yaml -->
+        <rosparam file="$(find rr100_navigation)/config/costmap_common.yaml" command="load"
+            ns="global_costmap" />
+        <rosparam file="$(find rr100_navigation)/config/costmap_common.yaml" command="load"
+            ns="local_costmap" />
+
+        <!-- local costmap, needs size -->
+        <rosparam file="$(find rr100_navigation)/config/local_costmap.yaml" command="load" />
+        <param name="local_costmap/width" value="10.0" />
+        <param name="local_costmap/height" value="10.0" />
+
+        <!-- static global costmap, static map provides size -->
+        <rosparam file="$(find rr100_navigation)/config/global_costmap.yaml" command="load"
+            ns="global_costmap" if="$(arg use_static_map)" />
+
+        <!-- global costmap with laser, for odom_navigation_demo -->
+        <rosparam file="$(find rr100_navigation)/config/global_costmap_laser.yaml" command="load"
+            ns="global_costmap" unless="$(arg no_static_map)" />
+        <param name="global_costmap/width" value="100.0" unless="$(arg no_static_map)" />
+        <param name="global_costmap/height" value="100.0" unless="$(arg no_static_map)" />
+    </node>
+</launch>
