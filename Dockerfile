@@ -65,14 +65,16 @@ RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
     # Unecesssary ? && apt-get remove ros-${ROS_DISTRO}-abseil-cpp \
     && catkin_make_isolated --install --use-ninja
 
+# Install RR100 ros package dependencies
+COPY debfiles/* ./debfiles/
+RUN python3 debfiles/deploy_debians_noetic.py debfiles
+
 WORKDIR ${WORKSPACE}
 COPY --from=cacher /tmp/$WORKSPACE/src ./src
 RUN . ${CARTOGRAPHER_WS}/devel_isolated/setup.sh \
+    && apt-get update \
     && rosdep update \
     && rosdep install -r -y --from-paths ./src --ignore-src --rosdistro ${ROS_DISTRO}
-# Install RR100 ros package dependencies
-COPY debfiles/* ./debfiles/
-RUN python3 debfiles/deploy_debians_noetic.py debfiles && apt -f install
 
 # Copy files from cacher stage
 COPY --from=cacher $WORKSPACE/src/ .
@@ -84,22 +86,40 @@ RUN . ${CARTOGRAPHER_WS}/devel_isolated/setup.sh \
     && ls dependencies | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
     && rm -rf dependencies
 
-# COPY src/packages src
+# Compile actual RR100 project packages
 RUN . ${CARTOGRAPHER_WS}/devel_isolated/setup.sh \
     && ls packages | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
     && rm -rf packages
 
+ENV WORKSPACE=$WORKSPACE
+RUN echo "source ${WORKSPACE}/devel/setup.bash" >> ~/.bashrcORKDIR $WORKSPACE/src
+RUN mkdir ../dependencies \
+    && ls | grep -v 'rhoban\|rr100\|simulator\|CMake' | xargs mv -t ../dependencies \
+    && mv ../dependencies .
+RUN mkdir ../packages \
+    && ls | grep -v 'dependencies\|gazebo\|simulator\|CMake' | xargs mv -t ../packages \
+    && mv ../packages .
+RUN mkdir ../simulation \
+    && ls | grep -v 'dependencies\|packages\|CMake' | xargs mv -t ../simulation \
+    && mv ../simulation .
 
 FROM builder as simulation
-RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
-RUN wget https://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
-RUN --mount=type=cache,target=/var/cache/apt \
-    apt-get update && apt-get install -y --no-install-recommends \
-    ignition-citadel vim gdb
+# RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+# RUN wget https://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
+# RUN --mount=type=cache,target=/var/cache/apt \
+#     apt-get update && apt-get install -y --no-install-recommends \
+#     ignition-citadel vim
 
 RUN . ${CARTOGRAPHER_WS}/devel_isolated/setup.sh \
     && ls simulation | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
     && rm -rf simulation
+
+ENV WORKSPACE=$WORKSPACE
+RUN sed --in-place --expression \
+    '$isource "$WORKSPACE/devel/setup.bash"' \
+    /ros_entrypoint.sh
+
+# CMD ["roslaunch", "rr100_gazebo", "rr100_playpen.launch", "gps_enabled:=true"]
 
 FROM builder as real
 ENV ROS_MASTER_URI=http://rr-100-07:11311
