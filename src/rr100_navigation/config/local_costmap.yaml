@@ -1,12 +1,13 @@
-local_costmap:
-  global_frame: odom
+global_frame: odom
+rolling_window: True
 
-  update_frequency: 4.0
-  publish_frequency: 3.0
+width: 6.0
+height: 6.0
+origin_x: 3.0
+origin_y: 3.0
+resolution: 0.05
 
-  static_map: false
-  rolling_window: true
-
-  width: 6.0
-  height: 6.0
-  resolution: 0.05
+plugins:
+  - { name: static_layer, type: "costmap_2d::StaticLayer" }
+  - { name: obstacles_layer, type: "costmap_2d::ObstacleLayer" }
+  - { name: voxel_layer, type: "costmap_2d::VoxelLayer" }

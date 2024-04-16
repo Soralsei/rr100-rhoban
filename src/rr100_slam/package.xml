@@ -52,6 +52,7 @@
 
   <exec_depend>cartographer</exec_depend>
   <exec_depend>cartographer_ros</exec_depend>
+  <exec_depend>pointcloud_to_laserscan</exec_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

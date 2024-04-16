@@ -25,7 +25,7 @@
 
     <arg name="gps_enabled" default="false" />
     <arg name="gps_topic" default="rr100_steering_controller/odom"
-        doc="The topic in which the robot's odometry data is published" if="$(arg gps_enabled)" />
+        doc="The topic in which the robot's odometry data is published" />
 
     <arg name="simulated" default="false" doc="Whether the robot is simulated" />
     <arg name="use_rviz" default="true" />
@@ -33,9 +33,15 @@
     <param name="/use_sim_time" value="$(arg simulated)" />
 
     <arg name="configuration_name" value="rr100_localization_only" if="$(arg gps_enabled)" />
-    <arg name="configuration_name" value="rr100_localization_only_no_gps" unless="$(arg gps_enabled)" />
+    <arg name="configuration_name" value="rr100_localization_only_no_gps"
+        unless="$(arg gps_enabled)" />
 
     <arg name="map_filename" default="$(find rr100_slam)/maps/map.pbstream" />
+
+    <include file="$(find rslidar_laserscan)/launch/rslidar_laserscan.launch">
+        <arg name="laserscan_topic" value="$(arg laserscan_topic)"/>
+        <arg name="pointcloud_topic" value="$(arg pointcloud_topic)"/>
+    </include>
 
     <node name="cartographer_node" pkg="cartographer_ros"
         type="cartographer_node"

@@ -1,0 +1,8 @@
+global_frame: map
+track_unknown_space: True
+static_map: False
+
+plugins:
+  - { name: static_layer, type: "costmap_2d::StaticLayer" }
+  - { name: voxel_layer, type: "costmap_2d::VoxelLayer" }
+  - { name: inflation_layer, type: "costmap_2d::InflationLayer" }

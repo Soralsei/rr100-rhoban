@@ -25,13 +25,14 @@ xhost +local:docker
 ```
 Then, run the container :
 ```bash
-docker run -ti --rm --gpus "all" \
+docker run --rm --gpus all \
     --net host \
     --env DISPLAY=$DISPLAY \
     --env QT_X11_NO_MITSHM=1 \
     --env XAUTHORITY=$XAUTH \
     --volume "$XAUTH:$XAUTH" \
-    # --device /dev/dri if you have an intel integrated graphics chipset
     -v /tmp/.X11-unix/:/tmp/.X11-unix/ \
-    <image-tag-name>
+    --device /dev/dri \
+    -v $(pwd)/.gazebo:/root/.gazebo/ \ # To keep gazebo model cache
+    -ti <image-tag-name>
 ```

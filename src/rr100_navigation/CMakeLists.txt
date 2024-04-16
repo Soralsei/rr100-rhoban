@@ -9,7 +9,6 @@ project(rr100_navigation)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   move_base
-  rr100_slam
 )
 
 ## System dependencies are found with CMake's conventions

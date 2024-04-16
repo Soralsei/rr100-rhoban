@@ -1,9 +1,0 @@
-global_costmap:
-   global_frame: odom
-   rolling_window: true
-   track_unknown_space: true
-
-   update_frequency: 5.0
-   publish_frequency: 0.0
-
-   static_map: false

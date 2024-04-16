@@ -26,7 +26,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
- INCLUDE_DIRS include
+#  INCLUDE_DIRS include
 #  LIBRARIES rr100_broadcaster
  CATKIN_DEPENDS geometry_msgs nav_msgs roscpp rospy tf2 tf2_ros
 #  DEPENDS system_lib

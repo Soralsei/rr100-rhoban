@@ -4,13 +4,22 @@
         doc="The topic in which the LiDAR laserscan data is published" />
     <arg name="pointcloud_topic" default="rslidar_points"
         doc="The topic in which the LiDAR pointcloud data is published" />
+
     <arg name="imu_topic" default="imu/data" doc="The topic in which the IMU data is published" />
     <arg name="odom_topic" default="rr100_steering_controller/odom"
         doc="The topic in which the robot's odometry data is published" />
 
     <arg name="gps_enabled" default="false" />
     <arg name="gps_topic" default="rr100_steering_controller/odom"
-        doc="The topic in which the robot's odometry data is published" if="$(arg gps_enabled)" />
+        doc="The topic in which the robot's odometry data is published" />
+
+    <arg name="cmd_vel_topic" default="cmd_vel"
+        doc="The topic in which velocity commands are published" />
+
+    <arg name="cam_point_cloud_enabled" default="true"
+        doc="Use the Realsense D435i point cloud for costmap updates" />
+    <arg name="cam_point_cloud_topic" default="camera/depth/color/points"
+        doc="Use the Realsense D435i point cloud for costmap updates" />
 
     <arg name="simulated" default="false" doc="Whether the robot is simulated" />
     <arg name="use_rviz" default="true" />
@@ -19,15 +28,17 @@
     <arg name="generate_map" default="true" />
     <arg name="map_resolution" default="0.05" doc="Map cell resolution" />
 
-    <group unless="$(arg generate_map)">
-        <arg name="map_path" default="$(find rr100_navigation)/map/map.pgm" doc="Map file path"
-            if="(arg use_static_map)" />
-        <node name="map_server" type="map_server" pkg="map_server"
-            args="$(arg map_path) $(arg map_resolution)"
-            if="$(arg use_static_map)" />
+    <arg name="global_costmap_width" default="100.0"
+        doc="Global costmap width (in meters) if no static map is specified" />
+    <arg name="global_costmap_height" default="100.0"
+        doc="Global costmap height (in meters) if no static map is specified" />
 
-        <include file="$(find rr100_slam)/launch/localization_only.launch"
-            if="$(arg use_static_map)">
+    <group unless="$(arg generate_map)">
+        <arg name="map_path" default="$(find rr100_navigation)/map/map.pgm" doc="Map file path" />
+        <node name="map_server" type="map_server" pkg="map_server"
+            args="$(arg map_path) $(arg map_resolution)" />
+
+        <include file="$(find rr100_slam)/launch/localization_only.launch">
             <arg name="laserscan_topic" value="$(arg laserscan_topic)" />
             <arg name="pointcloud_topic" value="$(arg pointcloud_topic)" />
             <arg name="imu_topic" value="$(arg imu_topic)" />
@@ -42,7 +53,7 @@
     </group>
 
     <group if="$(arg generate_map)">
-        <include file="$(find rr100_slam)/launch/slam_2d.launch" if="$(arg use_static_map)">
+        <include file="$(find rr100_slam)/launch/slam_2d.launch">
             <arg name="map_resolution" value="$(arg map_resolution)" />
             <arg name="laserscan_topic" value="$(arg laserscan_topic)" />
             <arg name="pointcloud_topic" value="$(arg pointcloud_topic)" />
@@ -59,6 +70,10 @@
 
     <include file="$(find rr100_navigation)/launch/move_base.launch">
         <arg name="use_static_map" value="$(arg use_static_map)" />
+        <arg name="cmd_vel_topic" value="$(arg cmd_vel_topic)" />
+
+        <arg name="global_costmap_width" value="$(arg global_costmap_width)" />
+        <arg name="global_costmap_height" value="$(arg global_costmap_height)" />
     </include>
 
     <node name="rviz" type="rviz" pkg="rviz"

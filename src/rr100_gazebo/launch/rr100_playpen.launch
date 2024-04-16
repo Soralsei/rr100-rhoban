@@ -4,7 +4,7 @@
 <launch>
 
   <arg name="realsense_enabled" default="true" doc="Enable the intel realsense camera of the RR100"/>
-  <arg name="gps_enabled" default="false" doc="Enable the GPS module of the RR100"/>
+  <arg name="gps_enabled" default="true" doc="Enable the GPS module of the RR100"/>
   <arg name="rslidar_enabled" default="true" doc="Enable the Robosense LiDAR of the RR100"/>
 
   <arg name="realsense_laserscan" default="false" doc="Convert realsense point cloud to laser scan" />

@@ -11,7 +11,8 @@ RUN --mount=type=cache,target=/var/cache/apt \
     ros-${ROS_DISTRO}-tf2-tools \
     ros-${ROS_DISTRO}-rqt \
     ros-${ROS_DISTRO}-rqt-common-plugins \
-    ros-${ROS_DISTRO}-rqt-robot-plugins
+    ros-${ROS_DISTRO}-rqt-robot-plugins 
+    # ros-${ROS_DISTRO}-joy
 
 
 # Caching stage
@@ -92,16 +93,7 @@ RUN . ${CARTOGRAPHER_WS}/devel_isolated/setup.sh \
     && rm -rf packages
 
 ENV WORKSPACE=$WORKSPACE
-RUN echo "source ${WORKSPACE}/devel/setup.bash" >> ~/.bashrcORKDIR $WORKSPACE/src
-RUN mkdir ../dependencies \
-    && ls | grep -v 'rhoban\|rr100\|simulator\|CMake' | xargs mv -t ../dependencies \
-    && mv ../dependencies .
-RUN mkdir ../packages \
-    && ls | grep -v 'dependencies\|gazebo\|simulator\|CMake' | xargs mv -t ../packages \
-    && mv ../packages .
-RUN mkdir ../simulation \
-    && ls | grep -v 'dependencies\|packages\|CMake' | xargs mv -t ../simulation \
-    && mv ../simulation .
+RUN echo "source ${WORKSPACE}/devel/setup.bash" >> ~/.bashrc
 
 FROM builder as simulation
 # RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'

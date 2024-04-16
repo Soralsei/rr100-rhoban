@@ -1,7 +1,9 @@
 robot_base_frame: base_link
 
-obstacle_range: 2.5
-raytrace_range: 3.0
+update_frequency: 4.0
+publish_frequency: 3.0
+obstacle_range: 3.0
+raytrace_range: 4.0
 
 footprint:
   [
@@ -11,29 +13,44 @@ footprint:
     [-0.45981, 0.32925],
   ]
 footprint_padding: 0.01
-inflation_radius: 0.6
-
 transform_tolerance: 0.5
 
-observation_sources: rslidar_scan rslidar_points #realsense_points #if using realsense point cloud
-rslidar_scan:
-  {
-    data_type: LaserScan,
-    topic: /rslidar_laserscan,
-    marking: true,
-    clearing: true,
-  }
-rslidar_points:
-  {
-    data_type: PointCloud2,
-    topic: /rslidar_points,
-    marking: true,
-    clearing: true,
-  }
-# realsense_points: #if using realsense point cloud
-#   {
-#     data_type: PointCloud2,
-#     topic: /camera/depth/color/points,
-#     marking: true,
-#     clearing: true,
-#   }
+#layer definitions
+static_layer:
+  map_topic: map
+
+obstacles_layer:
+  track_unknown_space: True
+  observation_sources: rslidar_scan
+  rslidar_scan:
+    {
+      data_type: LaserScan,
+      topic: laserscan,
+      marking: True,
+      clearing: True,
+      inf_is_valid: True,
+    }
+
+voxel_layer:
+  track_unknown_space: True
+  observation_sources: lidar_points camera_points #if using realsense point cloud
+  lidar_points: {
+      data_type: PointCloud2,
+      topic: rslidar_points,
+      marking: True,
+      clearing: True,
+      inf_is_valid: True,
+      min_obstacle_height: 0.12, # meters
+      max_obstacle_height: 1.0091, # meters (Robot height : 80.091cm + safety margin: 20cm)
+    }
+  camera_points: {
+      data_type: PointCloud2,
+      topic: depth/points,
+      marking: True,
+      clearing: True,
+      min_obstacle_height: 0.12, # meters
+      max_obstacle_height: 1.0091, # meters (Robot height : 80.091cm + safety margin: 20cm)
+    }
+
+inflation_layer:
+  inflation_radius: 0.6
