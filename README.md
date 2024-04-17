@@ -17,7 +17,7 @@ Then, you can simply build the docker image by executing the following command (
 docker build . -t <tag-name> --target <simulation|real>
 ```
 
-## Running
+## Running-
 ### With GUI
 First, add docker to authorized xhost users :
 ``` bash
@@ -25,14 +25,17 @@ xhost +local:docker
 ```
 Then, run the container :
 ```bash
-docker run --rm --gpus all \
+docker run --rm -ti \
+    --privileged \
+    --gpus all \
     --net host \
     --env DISPLAY=$DISPLAY \
     --env QT_X11_NO_MITSHM=1 \
     --env XAUTHORITY=$XAUTH \
     --volume "$XAUTH:$XAUTH" \
     -v /tmp/.X11-unix/:/tmp/.X11-unix/ \
-    --device /dev/dri \
-    -v $(pwd)/.gazebo:/root/.gazebo/ \ # To keep gazebo model cache
-    -ti <image-tag-name>
+    -v $(pwd)/.gazebo:/root/.gazebo/ \
+    <image-tag-name>
 ```
+
+    --device /dev/dri \

@@ -11,8 +11,8 @@ RUN --mount=type=cache,target=/var/cache/apt \
     ros-${ROS_DISTRO}-tf2-tools \
     ros-${ROS_DISTRO}-rqt \
     ros-${ROS_DISTRO}-rqt-common-plugins \
-    ros-${ROS_DISTRO}-rqt-robot-plugins 
-    # ros-${ROS_DISTRO}-joy
+    ros-${ROS_DISTRO}-rqt-robot-plugins \
+    ros-${ROS_DISTRO}-joy
 
 
 # Caching stage
@@ -96,12 +96,6 @@ ENV WORKSPACE=$WORKSPACE
 RUN echo "source ${WORKSPACE}/devel/setup.bash" >> ~/.bashrc
 
 FROM builder as simulation
-# RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
-# RUN wget https://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
-# RUN --mount=type=cache,target=/var/cache/apt \
-#     apt-get update && apt-get install -y --no-install-recommends \
-#     ignition-citadel vim
-
 RUN . ${CARTOGRAPHER_WS}/devel_isolated/setup.sh \
     && ls simulation | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
     && rm -rf simulation
@@ -116,4 +110,3 @@ RUN sed --in-place --expression \
 FROM builder as real
 ENV ROS_MASTER_URI=http://rr-100-07:11311
 ENV ROS_IP=192.168.1.241
-

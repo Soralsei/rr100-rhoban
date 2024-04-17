@@ -25,7 +25,7 @@
             ns="local_costmap" />
 
         <!-- local costmap, needs size -->
-        <rosparam file="$(find rr100_navigation)/config/local_costmap.yaml" command="load" />
+        <rosparam file="$(find rr100_navigation)/config/local_costmap.yaml" command="load" ns="local_costmap" />
         <!-- <param name="local_costmap/width" value="10.0" />
         <param name="local_costmap/height" value="10.0" /> -->
 

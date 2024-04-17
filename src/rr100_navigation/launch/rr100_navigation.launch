@@ -70,13 +70,19 @@
 
     <include file="$(find rr100_navigation)/launch/move_base.launch">
         <arg name="use_static_map" value="$(arg use_static_map)" />
+
         <arg name="cmd_vel_topic" value="$(arg cmd_vel_topic)" />
+        <arg name="scan_topic" value="$(arg laserscan_topic)" />
+        <arg name="odom_topic" value="$(arg odom_topic)" />
+
+        <arg name="cam_point_cloud_enabled" value="$(arg cam_point_cloud_enabled)" />
+        <arg name="cam_point_cloud_topic" value="$(arg cam_point_cloud_topic)" />
 
         <arg name="global_costmap_width" value="$(arg global_costmap_width)" />
         <arg name="global_costmap_height" value="$(arg global_costmap_height)" />
     </include>
 
     <node name="rviz" type="rviz" pkg="rviz"
-        args="-d $(find cartographer_ros)/configuration_files/demo_2d.rviz"
+        args="-d $(find rr100_navigation)/rviz/rr100_navigation.rviz"
         if="$(arg use_rviz)" />
 </launch>
