@@ -2,6 +2,7 @@ ARG WORKSPACE=/opt/ros/rr100_ws
 ARG CARTOGRAPHER_WS=/opt/ros/cartographer_ws
 ARG ROS_DISTRO=noetic
 ARG FROM_IMAGE=ros:${ROS_DISTRO}
+ARG IP=192.168.0.64
 
 # Cache apt dependencies
 FROM $FROM_IMAGE as apt-depends
@@ -53,9 +54,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git python3-wstool python3-rosdep ninja-build stow
 
 WORKDIR $CARTOGRAPHER_WS
+ADD cartographer_ros.rosinstall .
 RUN mkdir -p src \
     && wstool init src \
-    && wstool merge -t src https://raw.githubusercontent.com/cartographer-project/cartographer_ros/master/cartographer_ros.rosinstall \
+    && wstool merge -t src ./cartographer_ros.rosinstall \
     && wstool update -t src
 
 # Install package dependencies declared in package.xml files
@@ -108,5 +110,6 @@ RUN sed --in-place --expression \
 # CMD ["roslaunch", "rr100_gazebo", "rr100_playpen.launch", "gps_enabled:=true"]
 
 FROM builder as real
+ARG IP
 ENV ROS_MASTER_URI=http://rr-100-07:11311
-ENV ROS_IP=192.168.1.241
+ENV ROS_IP=${IP}

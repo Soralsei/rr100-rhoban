@@ -23,7 +23,7 @@
     <arg name="odom_topic" default="rr100_steering_controller/odom"
         doc="The topic in which the robot's odometry data is published" />
 
-    <arg name="gps_enabled" default="false"/>
+    <arg name="gps_enabled" default="false" />
     <arg name="gps_topic" default="rr100_steering_controller/odom"
         doc="The topic in which the robot's odometry data is published" />
 
@@ -32,14 +32,24 @@
 
     <param name="/use_sim_time" value="$(arg simulated)" />
 
-    <arg name="configuration_name" value="rr100_cartographer" if="$(arg gps_enabled)"/>
-    <arg name="configuration_name" value="rr100_cartographer_no_gps" unless="$(arg gps_enabled)"/>
+    <arg name="configuration_name" value="rr100_cartographer" if="$(arg gps_enabled)" />
+    <arg name="configuration_name" value="rr100_cartographer_no_gps" unless="$(arg gps_enabled)" />
 
-    <arg name="map_resolution" default="0.05" doc="Map gridcell resolution"/>
+    <arg name="map_resolution" default="0.05" doc="Map gridcell resolution" />
 
-    <include file="$(find rslidar_laserscan)/launch/rslidar_laserscan.launch">
-        <arg name="laserscan_topic" value="$(arg laserscan_topic)"/>
-        <arg name="pointcloud_topic" value="$(arg pointcloud_topic)"/>
+    <arg name="use_pointcloud_to_laserscan_nodelet" default="false" />
+    <arg name="nodelet_manager" default="rslidar_nodelet_manager" doc="Nodelet manager name" />
+    <arg name="rslidar_laserscan_suffix" value="_nodelet"
+        if="$(arg use_pointcloud_to_laserscan_nodelet)" />
+    <arg name="rslidar_laserscan_suffix" value=""
+        unless="$(arg use_pointcloud_to_laserscan_nodelet)" />
+
+    <include
+        file="$(find rslidar_laserscan)/launch/rslidar_laserscan$(arg rslidar_laserscan_suffix).launch">
+        <arg name="nodelet_manager" value="$(arg nodelet_manager)"
+            if="$(arg use_pointcloud_to_laserscan_nodelet)" />
+        <arg name="laserscan_topic" value="$(arg laserscan_topic)" />
+        <arg name="pointcloud_topic" value="$(arg pointcloud_topic)" />
     </include>
 
     <node name="cartographer_node" pkg="cartographer_ros"
@@ -58,6 +68,7 @@
     <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
         type="cartographer_occupancy_grid_node" args="-resolution $(arg map_resolution)" />
 
-    <node name="rviz" type="rviz" pkg="rviz" args="-d $(find cartographer_ros)/configuration_files/demo_2d.rviz"
+    <node name="rviz" type="rviz" pkg="rviz"
+        args="-d $(find cartographer_ros)/configuration_files/demo_2d.rviz"
         if="$(arg use_rviz)" />
 </launch>

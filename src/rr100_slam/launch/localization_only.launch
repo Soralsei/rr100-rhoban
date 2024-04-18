@@ -38,9 +38,19 @@
 
     <arg name="map_filename" default="$(find rr100_slam)/maps/map.pbstream" />
 
-    <include file="$(find rslidar_laserscan)/launch/rslidar_laserscan.launch">
-        <arg name="laserscan_topic" value="$(arg laserscan_topic)"/>
-        <arg name="pointcloud_topic" value="$(arg pointcloud_topic)"/>
+    <arg name="use_pointcloud_to_laserscan_nodelet" default="false" />
+    <arg name="nodelet_manager" default="rslidar_nodelet_manager" doc="Nodelet manager name" />
+    <arg name="rslidar_laserscan_suffix" value="_nodelet"
+        if="$(arg use_pointcloud_to_laserscan_nodelet)" />
+    <arg name="rslidar_laserscan_suffix" value=""
+        unless="$(arg use_pointcloud_to_laserscan_nodelet)" />
+
+    <include
+        file="$(find rslidar_laserscan)/launch/rslidar_laserscan$(arg rslidar_laserscan_suffix).launch">
+        <arg name="nodelet_manager" value="$(arg nodelet_manager)"
+            if="$(arg use_pointcloud_to_laserscan_nodelet)" />
+        <arg name="laserscan_topic" value="$(arg laserscan_topic)" />
+        <arg name="pointcloud_topic" value="$(arg pointcloud_topic)" />
     </include>
 
     <node name="cartographer_node" pkg="cartographer_ros"

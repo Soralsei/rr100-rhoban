@@ -1,4 +1,4 @@
-controller_frequency: 5.0
+controller_frequency: 6.0
 recovery_behaviour_enabled: True
 # Prohibit in place rotation commands since the robot cannot rotate in place (double Ackerman motor steering)
 clearing_rotation_allowed: False
@@ -57,6 +57,7 @@ TebLocalPlannerROS:
   free_goal_vel: False
 
   # Obstacles
+  min_obstacle_dist: 0.4
   inflation_dist: 0.6
   include_costmap_obstacles: True
   costmap_obstacles_behind_robot_dist: 1.0
@@ -70,7 +71,6 @@ TebLocalPlannerROS:
   costmap_converter_rate: 5
 
   # Optimization
-    
   no_inner_iterations: 5
   no_outer_iterations: 4
   optimization_activate: True
@@ -94,7 +94,6 @@ TebLocalPlannerROS:
   weight_adapt_factor: 2
 
   # Homotopy Class Planner
-
   enable_homotopy_class_planning: True
   enable_multithreading: True
   max_number_classes: 4

@@ -25,7 +25,8 @@
             ns="local_costmap" />
 
         <!-- local costmap, needs size -->
-        <rosparam file="$(find rr100_navigation)/config/local_costmap.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find rr100_navigation)/config/local_costmap.yaml" command="load"
+            ns="local_costmap" />
         <!-- <param name="local_costmap/width" value="10.0" />
         <param name="local_costmap/height" value="10.0" /> -->
 
@@ -45,6 +46,7 @@
             unless="$(arg cam_point_cloud_enabled)" />
 
         <param name="base_global_planner" value="global_planner/GlobalPlanner" />
+        <param name="GlobalPlanner/outline_map" value="true" />
         <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
 
         <param name="controller_frequency" value="10.0" />

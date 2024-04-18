@@ -2,14 +2,19 @@
 usage() {
     echo "Usage : build_and_run.sh [OPTIONS]
 Options :
-    - [ -i | --image-tag ] <tag-name> - REQUIRED
-    - [ -c | --container-name ] <container-name> - OPTIONAL, default : 'ros'
-    - [ -r | --rebuild ] - Rebuild the image, OPTIONAL
-    - [ -t | --target ] [ real | simulation ] - The build target, OPTIONAL, default : 'real'
-    - [ -g | --gpu ] - Add GPU support, OPTIONAL, default : false
-    - [ -h | --help ] : Show this message"
+    -i, --image-tag <tag-name>              Used to specify the docker image to run/build REQUIRED
+    -c, --container-name <container-name>   Used to specify the docker container name when running the image, OPTIONAL, default: 'ros'
+    -r, --rebuild                           Rebuild the image, OPTIONAL, default: false
+    -t, --target [real, simulation]         The build target, OPTIONAL, default: 'real'
+    -a --ip-address                         Your desired ROS_IP address, only used if target=='real'
+    -g, --gpu                               Add GPU support, OPTIONAL, default: false
+    -h, --help                              Show this message"
     exit 2
 }
+
+if [[ $# = 0 ]]; then
+    usage
+fi
 
 args=()
 # replace long arguments
@@ -21,6 +26,7 @@ for arg in "$@"; do
     --rebuild) args+=(-r) ;;
     --target) args+=(-t) ;;
     --gpu) args+=(-g) ;;
+    --ip-address) args+=(-a);;
     *) args+=("$arg") ;;
     esac
 done
@@ -32,8 +38,9 @@ tag=""
 rebuild=false
 gpu=false
 container="ros"
+ros_ip=""
 
-while getopts t:b:hi:rgc: option; do
+while getopts t:b:hi:rgc:a: option; do
     : "$option" "$OPTARG"
     case $option in
     i)
@@ -53,6 +60,7 @@ while getopts t:b:hi:rgc: option; do
     r) rebuild=true ;;
     c) container="$OPTARG" ;;
     g) gpu=true ;;
+    a) ros_ip="$OPTARG" ;;
     *) usage ;;
     esac
 done
@@ -72,21 +80,27 @@ else
         echo "$confirm"
         read -p "Image '$tag' does not exist locally, do you want to build it [Y/n] : " confirm
     done
-    if [ "${confirm,,}" == "n" ]; then
+    if [ "${confirm,,}" = "n" ]; then
         echo "Aborting..."
         exit 1
     fi
 fi
 
-if [ "$rebuild" = true ] || [ "${confirm,,}" == "y" ]; then
+if [ "$rebuild" = true ] || [ "${confirm,,}" = "y" ]; then
     echo -e "Build target : $target"
     if [ "$target" != "real" ] && [ "$target" != "simulation" ]; then
         echo -e "\nError : target '$target' should be either 'real' or 'simulation'"
         usage
     fi
 
+    args=""
+
+    if [ "$ros_ip" ]; then
+        args+="--build-arg IP=$ros_ip"
+    fi
+
     echo -e "Building image '$tag'... \n"
-    docker build . -t "$tag" --target "$target"
+    docker build . -t "$tag" --target "$target" $args
     code=$?
     if [ $code -ne 0 ]; then
         echo "Error during build : exit code $code, aborting..."
@@ -108,5 +122,4 @@ docker run --rm -ti \
     --volume "$XAUTH:$XAUTH" \
     -v /tmp/.X11-unix/:/tmp/.X11-unix/ \
     -v $(pwd)/.gazebo:/root/.gazebo/ \
-    --name $container\
-    $tag
+    --name $container $tag
