@@ -38,8 +38,8 @@ TebLocalPlannerROS:
   footprint_model: # types: "point", "circular", "two_circles", "line", "polygon"
     type: "line"
     # radius: 0.2 # for type "circular"
-    line_start: [-0.46, 0.0] # for type "line"
-    line_end: [0.46, 0.0] # for type "line"
+    line_start: [-0.13056, 0.0] # for type "line"
+    line_end: [0.13056, 0.0] # for type "line"
     front_offset: 0.46 # for type "two_circles"
     front_radius: 0.2 # for type "two_circles"
     rear_offset: 0.46 # for type "two_circles"
@@ -57,7 +57,7 @@ TebLocalPlannerROS:
   free_goal_vel: False
 
   # Obstacles
-  min_obstacle_dist: 0.45
+  min_obstacle_dist: 0.62925 # Half width of the robot (0.32925m) + safety margin (0.30m)
   inflation_dist: 0.6
   include_costmap_obstacles: True
   costmap_obstacles_behind_robot_dist: 1.0

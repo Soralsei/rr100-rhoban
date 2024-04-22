@@ -47,4 +47,9 @@ MAP_BUILDER.use_trajectory_builder_2d = true
 TRAJECTORY_BUILDER_2D.num_accumulated_range_data = 1
 TRAJECTORY_BUILDER_2D.use_imu_data = true
 
+POSE_GRAPH.optimization_problem.local_slam_pose_translation_weight = 1e5  -- default: 1e5
+POSE_GRAPH.optimization_problem.local_slam_pose_rotation_weight = 1e5     -- default: 1e5
+POSE_GRAPH.optimization_problem.odometry_translation_weight = 1e5         -- default: 1e5
+POSE_GRAPH.optimization_problem.odometry_rotation_weight = 1e1            -- default: 1e5
+
 return options
