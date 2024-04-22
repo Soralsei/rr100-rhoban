@@ -22,7 +22,9 @@
     <arg name="cam_point_cloud_enabled" default="true"
         doc="Use the Realsense D435i point cloud for costmap updates" />
     <arg name="cam_point_cloud_topic" default="camera/depth/color/points"
-        doc="Use the Realsense D435i point cloud for costmap updates" />
+        doc="The depth camera point cloud topic" />
+    <arg name="cam_rgb_topic" default="camera/color/image_raw"
+        doc="The RGB image camera topic" />
 
     <arg name="simulated" default="false" doc="Whether the robot is simulated" />
     <arg name="use_rviz" default="true" />
@@ -37,9 +39,12 @@
         doc="Global costmap height (in meters) if no static map is specified" />
 
     <group unless="$(arg generate_map)">
-        <arg name="map_path" default="$(find rr100_navigation)/map/map.pgm" doc="Map file path" />
+        <arg name="pgm_map_path" default="$(find rr100_navigation)/maps/map.pgm"
+            doc="Map (pbm format) file path" />
+        <arg name="pbstream_map_path" default="$(find rr100_slam)/maps/map.pbstream"
+            doc="Map (pbstream format) file path" />
         <node name="map_server" type="map_server" pkg="map_server"
-            args="$(arg map_path) $(arg map_resolution)" />
+            args="$(arg pgm_map_path)" />
 
         <include file="$(find rr100_slam)/launch/localization_only.launch">
             <arg name="use_pointcloud_to_laserscan_nodelet"
@@ -55,6 +60,7 @@
 
             <arg name="simulated" value="$(arg simulated)" />
             <arg name="use_rviz" value="false" />
+            <arg name="map_filename" value="$(arg pbstream_map_path)" />
         </include>
     </group>
 
@@ -93,5 +99,7 @@
 
     <node name="rviz" type="rviz" pkg="rviz"
         args="-d $(find rr100_navigation)/rviz/rr100_navigation.rviz"
-        if="$(arg use_rviz)" />
+        if="$(arg use_rviz)">
+        <remap from="camera/color/image_raw" to="$(arg cam_rgb_topic)" />
+    </node>
 </launch>
