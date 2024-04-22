@@ -30,8 +30,8 @@ obstacles_layer:
     }
 
 voxel_layer:
-  min_obstacle_height: 0.12, # meters
-  max_obstacle_height: 1.0091, # meters (Robot height : 0.80091m + safety margin: 0.20m)
+  min_obstacle_height: 0.0, # meters
+  max_obstacle_height: 1.6, # meters (double the robot's height)
   track_unknown_space: True
   observation_sources: lidar_points camera_points #if using realsense point cloud
   lidar_points:
@@ -51,4 +51,5 @@ voxel_layer:
     }
 
 inflation_layer:
-  inflation_radius: 0.6
+  inflation_radius: 1.75
+  cost_scaling_factor: 2.58

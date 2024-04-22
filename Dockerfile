@@ -1,7 +1,6 @@
 ARG WORKSPACE=/opt/ros/rr100_ws
 ARG CARTOGRAPHER_WS=/opt/ros/cartographer_ws
-ARG ROS_DISTRO=noetic
-ARG FROM_IMAGE=ros:${ROS_DISTRO}
+ARG FROM_IMAGE=ros:noetic
 ARG IP=192.168.0.64
 
 # Cache apt dependencies

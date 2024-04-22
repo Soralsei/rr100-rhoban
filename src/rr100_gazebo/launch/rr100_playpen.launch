@@ -11,8 +11,10 @@
 
   <arg name="debug" default="false" />
   <arg name="verbose" default="true" />
+  <arg name="use_gui" default="true" doc="Launch with the gazebo GUI"/>
 
   <include file="$(find rr100_gazebo)/launch/playpen.launch">
+    <arg name="use_gui" value="$(arg use_gui)"/>
     <arg name="debug" value="$(arg debug)" />
     <arg name="verbose" value="$(arg verbose)" />
   </include>
