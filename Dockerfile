@@ -47,25 +47,9 @@ RUN mkdir ../simulation \
 #Building stage
 FROM apt-depends as builder
 ARG WORKSPACE
-ARG CARTOGRAPHER_WS
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git python3-wstool python3-rosdep ninja-build stow
-
-WORKDIR $CARTOGRAPHER_WS
-ADD cartographer_ros.rosinstall .
-RUN mkdir -p src \
-    && wstool init src \
-    && wstool merge -t src ./cartographer_ros.rosinstall \
-    && wstool update -t src
-
-# Install package dependencies declared in package.xml files
-RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
-    && rosdep update \
-    && rosdep install -r -y --from-paths ./src --ignore-src --rosdistro ${ROS_DISTRO} \
-    && src/cartographer/scripts/install_abseil.sh \
-    # Unecesssary ? && apt-get remove ros-${ROS_DISTRO}-abseil-cpp \
-    && catkin_make_isolated --install --use-ninja
 
 # Install RR100 ros package dependencies
 COPY debfiles/* ./debfiles/
@@ -73,7 +57,7 @@ RUN python3 debfiles/deploy_debians_noetic.py debfiles
 
 WORKDIR ${WORKSPACE}
 COPY --from=cacher /tmp/$WORKSPACE/src ./src
-RUN . ${CARTOGRAPHER_WS}/devel_isolated/setup.sh \
+RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
     && apt-get update \
     && rosdep update \
     && rosdep install -r -y --from-paths ./src --ignore-src --rosdistro ${ROS_DISTRO}
@@ -84,12 +68,12 @@ RUN mv CMakeLists.txt src \
     && cp -r dependencies/* packages/* simulation/* src
 
 # Compile dependencies as separate layer for better cache
-RUN . ${CARTOGRAPHER_WS}/devel_isolated/setup.sh \
+RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
     && ls dependencies | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
     && rm -rf dependencies
 
 # Compile actual RR100 project packages
-RUN . ${CARTOGRAPHER_WS}/devel_isolated/setup.sh \
+RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
     && ls packages | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
     && rm -rf packages
 
@@ -97,7 +81,7 @@ ENV WORKSPACE=$WORKSPACE
 RUN echo "source ${WORKSPACE}/devel/setup.bash" >> ~/.bashrc
 
 FROM builder as simulation
-RUN . ${CARTOGRAPHER_WS}/devel_isolated/setup.sh \
+RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
     && ls simulation | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
     && rm -rf simulation
 

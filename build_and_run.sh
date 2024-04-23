@@ -139,8 +139,8 @@ docker run --rm -ti \
     --env QT_X11_NO_MITSHM=1 \
     --env XAUTHORITY=$XAUTH \
     --volume "$XAUTH:$XAUTH" \
-    -v /tmp/.X11-unix/:/tmp/.X11-unix/ \
-    -v $(pwd)/.gazebo:/root/.gazebo/ \
+    --volume /tmp/.X11-unix/:/tmp/.X11-unix/ \
+    --volume $(pwd)/.gazebo:/root/.gazebo/ \
     --name $container $tag
 
 ## docker run options explanation : 

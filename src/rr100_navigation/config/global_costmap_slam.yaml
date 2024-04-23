@@ -1,6 +1,5 @@
 global_frame: map
 track_unknown_space: True
-static_map: False
 
 publish_frequency: 1.0
 update_frequency: 2.0

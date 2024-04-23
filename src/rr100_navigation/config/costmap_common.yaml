@@ -1,4 +1,4 @@
-robot_base_frame: base_footprint
+robot_base_frame: base_link
 
 obstacle_range: 3.0
 raytrace_range: 4.0
@@ -26,7 +26,6 @@ obstacles_layer:
       topic: scan,
       marking: True,
       clearing: True,
-      inf_is_valid: True,
     }
 
 voxel_layer:
@@ -39,8 +38,7 @@ voxel_layer:
       data_type: PointCloud2,
       topic: rslidar_points,
       marking: True,
-      clearing: True,
-      inf_is_valid: True,
+      clearing: True
     }
   camera_points:
     {
