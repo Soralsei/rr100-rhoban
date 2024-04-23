@@ -1,3 +1,6 @@
 .vscode
 .gazebo
+build
+devel
+.catkin_workspace
 log
