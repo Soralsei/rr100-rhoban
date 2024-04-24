@@ -24,7 +24,8 @@
 	"privileged": true,
 	"runArgs": [
 		"--net=host",
-		"--gpus=all"
+		"--gpus=all",
+		"--name=ros"
 	],
 	"containerEnv": {
 		"DISPLAY": "${localEnv:DISPLAY}",

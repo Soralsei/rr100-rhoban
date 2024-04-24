@@ -9,15 +9,15 @@ debug: false
 
 map_frame: map
 odom_frame: odom
-base_link_frame: base_link
+base_link_frame: base_footprint
 world_frame: odom
 
 odom0: odom
-odom0_config: [true, true, false, # x, y, z
-                false, false, false, # roll, pitch, yaw
-                true,  false,  false,  # vx, vy, vz
-                false, false, true,  # vroll, vpitch, vyaw
-                false, false, false] # ax, ay, az
+odom0_config: [ false, false, false,    # x, y, z
+                false, false, false,     # roll, pitch, yaw
+                true,  true, true,    # vx, vy, vz
+                false, false, true,     # vroll, vpitch, vyaw
+                false, false, false]    # ax, ay, az
 odom0_queue_size: 10
 odom0_nodelay: true
 odom0_differential: false
@@ -27,7 +27,7 @@ imu0: imu/data
 imu0_config: [false, false, false,  # x, y, z
               true,  true,  true,  # roll, pitch, yaw
               false, false, false,  # vx, vy, vz
-              true,  true,  true,   # vroll, vpitch, vyaw
+              false,  false,  true,   # vroll, vpitch, vyaw
               true,  true,  true]   # ax, ay, az
 imu0_nodelay: false
 imu0_differential: false
@@ -36,6 +36,8 @@ imu0_queue_size: 10
 imu0_remove_gravitational_acceleration: true
 
 use_control: false
+reset_on_time_jump: true
+publish_tf: true
 
 process_noise_covariance: [1e-3, 0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
                             0,    1e-3, 0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
