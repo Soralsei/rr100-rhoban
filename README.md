@@ -1,6 +1,7 @@
 # RR100 Navigation package
 ## Dependencies
 This project should only depend on docker to be built and function. You can see install instructions by following [this link](https://docs.docker.com/engine/install/).
+If you get permission-related errors when managing docker after installing, first try to follow the instructions located [here](https://docs.docker.com/engine/install/linux-postinstall/). If these instructions still don't resolve your issues, you might need to prepend `sudo` before every command that involves docker (the `build_and_run.sh` script included).
 
 If you want to have access to hardware acceleration inside the container using an nvidia GPU, follow the install instructions for the nvidia-container-toolkit located [here](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
 
@@ -35,7 +36,9 @@ user@machine:~/rr100-rhoban$ ./build_and_run.sh --image-tag rr100-sim --target s
 ```
 
 ## Running the project
-Before we start, if you want to have access the GUI, it is necessary the give access to your X server to the docker container. To do this, a quick and dirty way would be to add the docker user to the authorized users for your X server by executing `xhost +local:docker`. However, this isn't a safe way of doing this but since we aren't exposing anything to the internet, we can get away with going about it like this. You can also add it to your `.bashrc` to avoid having to retype it on every reboot. 
+Before we start, if you want to have access the GUI, it is necessary the give access to your X server to the docker container. To do this, a quick and dirty way would be to add the docker user to the authorized users for your X server by executing `xhost +local:docker`. However, this isn't a safe way of doing this but since we aren't exposing anything to the internet, we can get away with going about it like this. You can also add it to your `.bashrc` to avoid having to retype it on every reboot.
+
+Setting up a safe way to expose GUI applications running inside of docker would require modifications to the Docker file and where the source files are copied to inside of the container but an example of said setup is available on the [ROS wiki](https://wiki.ros.org/docker/Tutorials/GUI) if you wish to follow this route.
 
 ### In simulation
 First, in a first terminal in the container, run the following command :
