@@ -1,7 +1,6 @@
 global_frame: map
 rolling_window: False
-track_unknown_space: True
-static_map: True # use static_map: False if only navigate in odom frame or want to do SLAM
+track_unknown_space: true
 
 publish_frequency: 1.0
 update_frequency: 2.0
