@@ -1,5 +1,5 @@
 # RR100 Rhoban documentation
-<style>
+<!-- <style>
   .figure {
     margin: 12pt auto;
     width: 100%;
@@ -12,7 +12,7 @@
   .figure > p,i {
     font-size: 12pt;
   }
-</style>
+</style> -->
 
 ## Package and tools documentation
 - `docker` : https://docs.docker.com/
@@ -36,9 +36,9 @@ This section is useful for those who either don't have access to a PC running Ub
 ### Architecture basics
 Docker is based on a client-server architecture with the client talking to a local or remote daemon (`dockerd`) which handles building images, running and distributing containers. These images and containers are called *Docker objects*. 
 
-<div class="figure">
+<div>
   <img src="resources/docker-architecture.webp"/>
-  <i>Docker's general architecture (Source: <a href="https://docs.docker.com/get-started/overview/#docker-architecture">Docker's documentation</a>)</i>
+  <p align="center"><i>Docker's general architecture (Source: <a href="https://docs.docker.com/get-started/overview/#docker-architecture">Docker's documentation</a>)</i></p>
 </div>
 
 #### Images
@@ -101,9 +101,9 @@ To run containers, you will need to use the `docker run` command.
 This project makes use of many packages oriented towards autonomous robot navigation, all of which are standard in the ROS ecosystem. These packages all handle a different aspect of navigation, namely mapping, localizing, and path planning for the robot and we will go over how each of them works in a later section.
 
 For now, let's focus on how each of these packages are integrated in our autonomous navigation package and how they intreact with each other. Below, a diagram illustrates how each package interacts with the robot and the other packages.
-<div class="figure" style="width: 95%;">
-  <img src="resources/rr100_package_diagram.png"/>
-  <i>RR100 navigation package diagram</i>
+<div>
+  <img src="resources/rr100_package_diagram.png"/><br>
+  <p align="center"><i>RR100 navigation package diagram</i></p>
 </div>
 
 First, `rslidar_laserscan` (internally uses `pointcloud_to_laserscan`) takes in point clouds recorded by the RSLiDAR-16 of the robot and converts them to a planar 2D point cloud in the standard ROS format `sensor_msgs/LaserScan`. This converted point cloud is then piped to the SLAM package `slam_toolbox`, which reads the robot's transform tree (more specifically the transform from the base frame to the LiDAR frame and from the odometry frame to the base frame) and the 2D laserscan to compute an occupancy grid used as a map (how this is done will be detailed in a later section) which is then published.
@@ -118,7 +118,7 @@ Finally `move_base`, which can be subdivided into 3 packages (2 path planning pa
 ### Node and topic interaction
 <div class="figure" >
   <img src="resources/nav_node_graph_no_tf.png"/>
-  <i>Package node graph (without tf connections)</i>
+  <p align="center"><i>Package node graph (without tf connections)</i></p>
 </div>
 
 > [!NOTE]
