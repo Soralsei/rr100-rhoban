@@ -87,10 +87,30 @@ The Docker CLI is used for building images, running containers and managing your
 ##### Building
 To build your docker images, you will need to know the `docker build` command. This command takes various arguments with the most commonly used ones being `--tag <name>(?:\:<tag>)?`, `--target <Stage in Dockerfile>` and `--build-arg <ARG_NAME>=<VALUE>`, followed by the path the build context (which should contain your Dockerfile). This will start the building process of your Docker image described by the Dockerfile passed to the command. For a complete overview of this command , you can check out the [official reference](https://docs.docker.com/reference/cli/docker/image/build/) for it.
 
+Example command:
+```console
+user@machine:~/hello_world$ docker build --tag hello-world:v1.0.0 .
+```
+
 ##### Running containers
-To run containers, you will need to use the `docker run` command.
+To run containers, you will need to use the `docker run` command. The `docker run` command runs a command in a new container, pulling the image if needed and starting the container. The command takes the following format `docker run [OPTIONS] <IMAGE> [COMMAND] [ARG...]` and if a command is not specified, Docker only executes the image's `ENTRYPOINT` or `CMD`.
 > [!NOTE]
-> Under construction
+> See [here](https://docs.docker.com/reference/dockerfile/#understand-how-cmd-and-entrypoint-interact) for details about `ENTRYPOINT` and `CMD`. Something that isn't mentionned in the linked section is that docker images inherit `ENTRYPOINT` and `CMD` from its base image.
+
+`docker run` can take many options, with the most common ones being:
+- `-i, --interactive` which keeps the containers `STDIN` open to inputs
+- `-t, --tty` which creates a pseudo-terminal and attaches it to the container
+- `--mount <key>=<value>` which allows you to mount volumes, host-directories, and tmpfs mounts in a container
+- `-e, --env <NAME>=<VALUE>` which is used to set environment variables inside of the container.
+- `--name NAME` which gives a name to the container that can be used to manage said container.
+- `--net, --network=<network>` to connect the container to a specific network (or `host` to use the host's network)
+- `-p, --publish (?:<host ip>\:)?<host port>:(?:<container ip>\:)?<container port>` which binds the container's port to the hosts's port on a specific network interface (if specified) or all interfaces.
+- `--expose <port>` which exposes the specified container's port without publishing it to the host system's interfaces
+
+Example command:
+```console
+user@machine:~/hello_world$ docker run -ti --name hello-container bash
+```
 
 ## ROS basics
 > [!NOTE]

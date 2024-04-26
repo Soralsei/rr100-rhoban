@@ -30,8 +30,10 @@ RUN mkdir -p /tmp/opt && \
     find . -name "CATKIN_IGNORE" | \
     xargs cp --parents -t /tmp/opt || true
 
-# Hack to compile everything separately in later stage
+# Hacky way to compile everything separately in later stage
 ## Should find better way to partition everything
+## Here, any package in src/ that doesn't have 'rr100' 
+## and 'simulator' in its name is treated as a dependency
 WORKDIR $WORKSPACE/src
 RUN mkdir ../dependencies \
     && ls | grep -v 'rhoban\|rr100\|simulator\|CMake' | xargs mv -t ../dependencies \
@@ -79,12 +81,12 @@ RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
     && rm -rf packages
 
 # ENV WORKSPACE=$WORKSPACE
-# RUN echo "source ${WORKSPACE}/devel/setup.bash" >> ~/.bashrc
 
 ENV WORKSPACE=$WORKSPACE
 RUN sed --in-place --expression \
     '$isource "$WORKSPACE/devel/setup.bash"' \
-    /ros_entrypoint.sh
+    /ros_entrypoint.sh \
+    && echo "source ${WORKSPACE}/devel/setup.bash" >> ~/.bashrc
 
 FROM builder as simulation
 RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
