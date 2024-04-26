@@ -12,8 +12,8 @@ RUN --mount=type=cache,target=/var/cache/apt \
     ros-${ROS_DISTRO}-rqt \
     ros-${ROS_DISTRO}-rqt-common-plugins \
     ros-${ROS_DISTRO}-rqt-robot-plugins \
-    ros-${ROS_DISTRO}-joy
-
+    ros-${ROS_DISTRO}-joy \
+    && rm -rf /var/lib/apt/lists/*
 
 # Caching stage
 FROM $FROM_IMAGE AS cacher
@@ -60,7 +60,8 @@ COPY --from=cacher /tmp/$WORKSPACE/src ./src
 RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
     && apt-get update \
     && rosdep update \
-    && rosdep install -r -y --from-paths ./src --ignore-src --rosdistro ${ROS_DISTRO}
+    && rosdep install -r -y --from-paths ./src --ignore-src --rosdistro ${ROS_DISTRO} \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy files from cacher stage
 COPY --from=cacher $WORKSPACE/src/ .
@@ -77,20 +78,18 @@ RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
     && ls packages | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
     && rm -rf packages
 
-ENV WORKSPACE=$WORKSPACE
-RUN echo "source ${WORKSPACE}/devel/setup.bash" >> ~/.bashrc
-
-FROM builder as simulation
-RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
-    && ls simulation | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
-    && rm -rf simulation
+# ENV WORKSPACE=$WORKSPACE
+# RUN echo "source ${WORKSPACE}/devel/setup.bash" >> ~/.bashrc
 
 ENV WORKSPACE=$WORKSPACE
 RUN sed --in-place --expression \
     '$isource "$WORKSPACE/devel/setup.bash"' \
     /ros_entrypoint.sh
 
-# CMD ["roslaunch", "rr100_gazebo", "rr100_playpen.launch", "gps_enabled:=true"]
+FROM builder as simulation
+RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
+    && ls simulation | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
+    && rm -rf simulation
 
 FROM builder as real
 ARG IP
