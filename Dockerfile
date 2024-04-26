@@ -1,5 +1,4 @@
 ARG WORKSPACE=/opt/ros/rr100_ws
-ARG CARTOGRAPHER_WS=/opt/ros/cartographer_ws
 ARG FROM_IMAGE=ros:noetic
 ARG IP=192.168.0.64
 
@@ -67,16 +66,17 @@ RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
 
 # Copy files from cacher stage
 COPY --from=cacher $WORKSPACE/src/ .
-RUN mv CMakeLists.txt src \
-    && cp -r dependencies/* packages/* simulation/* src
 
 # Compile dependencies as separate layer for better cache
-RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
+RUN mv CMakeLists.txt src \
+    && . /opt/ros/${ROS_DISTRO}/setup.sh \
+    && cp -r dependencies/* src \
     && ls dependencies | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
     && rm -rf dependencies
 
 # Compile actual RR100 project packages
 RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
+    && cp -r packages/* src \
     && ls packages | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
     && rm -rf packages
 
@@ -90,6 +90,7 @@ RUN sed --in-place --expression \
 
 FROM builder as simulation
 RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
+    && cp -r simulation/* src \
     && ls simulation | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
     && rm -rf simulation
 

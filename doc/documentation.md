@@ -115,7 +115,33 @@ user@machine:~/hello_world$ docker run -ti --name hello-container bash
 ## ROS basics
 > [!NOTE]
 > Under construction
-> 
+
+## Dockerfile structure
+The Dockerfile for this project is structured in a multi-stage manner and inherits from the official Docker `ros:noetic` image. There are in total 3 building stages and 2 target stages in our building process. To optimize build times, we define 2 independent stages `apt-depends` and `cacher` that can be run in parallel by Docker's builder. The former stage's purpose is to download and install dependencies and useful packages for this projects. This stage is later used as a base for our `builder` stage that will handleactually building this project.
+
+The latter stage (`cacher`) is used to cache `package.xml` files from our project's packages which declare these packages dependencies as they're less likely to change during development :
+```Dockerfile
+WORKDIR $WORKSPACE/src
+COPY src .
+
+# Separate package.xml files in /tmp directory
+WORKDIR /opt
+RUN mkdir -p /tmp/opt && \
+    find . -name "package.xml" | \
+    xargs cp --parents -t /tmp/opt && \
+    find . -name "CATKIN_IGNORE" | \
+    xargs cp --parents -t /tmp/opt || true
+```
+We copy the source directory to this stage and copy every `package.xml`/`CATKIN_IGNORE` file to a temporary directory while keeping the original source tree structure. In this same stage, we separate dependencies from simulator packages and from actual project packages to be able to compile them in separate docker layers later.
+
+Next comes the `builder` stage that inherits from the `apt-depends` stage. In `builder` we first copy the `package.xml` files from the `cacher` stage into our final workspace and run `rosdep install` to install our packages' dependencies. Then, we copy our separated packages and compile them in their own layers to make use of Docker's caching capabilities.
+
+Finally we have the two target stages, `simulation` and `real`. In `simulation`, we copy the simulation packages into our workspace and compile them separately whereas in `real`, we skip these packages as they are not needed and set our `ROS_MASTER_URI` to the RR100 robot and our `ROS_IP` to our IP address.
+
+## Build and run script
+> [!NOTE]
+> Under construction
+
 ## Overview of the project
 ### Package interaction
 This project makes use of many packages oriented towards autonomous robot navigation, all of which are standard in the ROS ecosystem. These packages all handle a different aspect of navigation, namely mapping, localizing, and path planning for the robot and we will go over how each of them works in a later section.
@@ -131,18 +157,18 @@ First, `rslidar_laserscan` (internally uses `pointcloud_to_laserscan`) takes in 
 In parallel, `robot_localization` (a pose estimation package built with Kalman filters) takes in wheel encoder odometry data and IMU data published by the robot and fuses these sensor measurements to estimate to robot's pose in the odometry frame and publish this pose to the `tf` tree (which is used by `slam_toolbox`).
 
 Finally `move_base`, which can be subdivided into 3 packages (2 path planning packages and a costmap computing package), uses sensor data, a SLAM or a static map, and the robot's pose estimation to :
-- plan a global path towards the goal pose
-- plan a local path to follow the global path (which includes unplanned obstacle avoidance)
+- compute costmaps (global and local) in a *grid* format which are used by both planners to plan a path towards a goal pose 
+- plan a global path towards the goal pose by using the global costmap as a graph and finding the least costly path (in terms of distances and cost on the costmap) from the starting pose node to the goal pose node
+- plan a local path to follow the global path (which includes unplanned obstacle avoidance) using the local costmap in a similar fashion to the global planner
 - compute velocity commands to follow the local path
 
 ### Node and topic interaction
-<div class="figure" >
-  <img src="resources/nav_node_graph_no_tf.png"/>
-  <p align="center"><i>Package node graph (without tf connections)</i></p>
-</div>
-
 > [!NOTE]
 > Under construction
+<div class="figure" >
+  <img src="resources/nav_node_graph_no_tf.png"/>
+  <p align="center"><i>Package node graph (without tf connections), ellipses represent nodes and rectangles represent topics</i></p>
+</div>
 
 ## Per-package description
 > [!NOTE]
