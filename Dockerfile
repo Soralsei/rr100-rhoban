@@ -11,7 +11,6 @@ RUN --mount=type=cache,target=/var/cache/apt \
     ros-${ROS_DISTRO}-rqt \
     ros-${ROS_DISTRO}-rqt-common-plugins \
     ros-${ROS_DISTRO}-rqt-robot-plugins \
-    ros-${ROS_DISTRO}-joy \
     && rm -rf /var/lib/apt/lists/*
 
 # Caching stage
@@ -62,6 +61,7 @@ RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
     && apt-get update \
     && rosdep update \
     && rosdep install -r -y --from-paths ./src --ignore-src --rosdistro ${ROS_DISTRO} \
+    && apt-get upgrade -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy files from cacher stage

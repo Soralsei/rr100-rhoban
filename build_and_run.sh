@@ -118,7 +118,6 @@ if [ "$rebuild" = true ] || [ "${confirm,,}" = "y" ]; then
     fi
 fi
 
-echo -e "Running container '$container' with image '$tag'...\n"
 GPU_ARGS=""
 if [ "$gpu"=true ]; then
     # Give access to all available GPUs to the container 
@@ -127,11 +126,11 @@ if [ "$gpu"=true ]; then
 fi
 
 
+echo -e "Running container '$container' with image '$tag'...\n"
 # If you wish to add devices your host has access to to the container,
 # you can add as many '--device' or '-d' followed by the path to the /dev/*
 # you want to access inside the container BEFORE the the docker image tag
 # example : docker run -ti --device /dev/video0 --name test rr100-sim
-
 docker run --rm -ti \
     $GPU_ARGS \
     --net host \
@@ -140,7 +139,7 @@ docker run --rm -ti \
     --env XAUTHORITY=$XAUTH \
     --volume "$XAUTH:$XAUTH" \
     --volume /tmp/.X11-unix/:/tmp/.X11-unix/ \
-    --volume $(pwd)/.gazebo:/root/.gazebo/ \
+    --volume $HOME/.gazebo:/root/.gazebo/ \
     --name $container $tag
 
 ## docker run options explanation : 

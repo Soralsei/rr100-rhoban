@@ -22,8 +22,8 @@ TebLocalPlannerROS:
   publish_feedback: False
 
   # Robot
-  max_vel_x: 2.5              # m/s
-  max_vel_x_backwards: 2.5    # m/s
+  max_vel_x: .5              # m/s
+  max_vel_x_backwards: .5    # m/s
   max_vel_y: 0.0              # m/s
   max_vel_theta: 0.3          # rad/s²
   acc_lim_x: 0.5              # m/s²
@@ -45,19 +45,20 @@ TebLocalPlannerROS:
     rear_offset: 0.46 # for type "two_circles"
     rear_radius: 0.2 # for type "two_circles"
     vertices: [
-        [0.45981, 0.32925],
-        [0.45981, -0.32925],
+        [0.5, 0.32925],
+        [0.5, -0.32925],
         [-0.45981, -0.32925],
         [-0.45981, 0.32925],
       ] # for type "polygon"
 
   # Goal Tolerance
   xy_goal_tolerance: 0.1
-  yaw_goal_tolerance: 0.1
+  yaw_goal_tolerance: 0.175
   free_goal_vel: False
 
   # Obstacles
-  min_obstacle_dist: 0.62925 # Half width of the robot (0.32925m) + safety margin (0.30m)
+  min_obstacle_dist: 0.62925 # Half width of the robot (0.32925m) + safety margin (0.10m)
+  # min_obstacle_dist: 0.10
   inflation_dist: 0.6
   include_costmap_obstacles: True
   costmap_obstacles_behind_robot_dist: 1.0
