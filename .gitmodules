@@ -10,3 +10,6 @@
 [submodule "src/robosense_simulator"]
 	path = src/robosense_simulator
 	url = https://github.com/tomlogan501/robosense_simulator.git
+[submodule "src/slam_toolbox"]
+	path = src/slam_toolbox
+	url = https://github.com/SteveMacenski/slam_toolbox.git

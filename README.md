@@ -44,6 +44,7 @@ roslaunch rr100_gazebo rr100_<empty|playpen>.launch
 ```
 Here, you will get a few errors concerning a missing "p gain" parameter :
 <img src="res/pid_error.png"/>
+
 However these errors are false positives and won't affect the simulated robot. Nonetheless, if you still wish to remove these error messages, you can add following parameters in the configuration file at `/opt/ros/$ROS_DISTRO/share/rr100_configuration/rr100_control/control.yaml`
 ```yaml
 gazebo_ros_control: 
@@ -55,7 +56,7 @@ gazebo_ros_control:
     # front_left_wheel ...
 ```
 > [!WARNING]
-> You should nevertheless be advised that these changes are only temporary and will be void every time you rebuild the image or run a new container.
+> You should nevertheless be advised that these changes are only temporary and will be void every time you rebuild the image or run a new container unless you copy the original package (`rr100_configuration`), modify these files directly then add then to this workspace.
 
 Next, open a new terminal inside the container :
 ```bash
@@ -107,11 +108,34 @@ Before starting, you will need to be able to communicate with the RR100 by using
 192.168.123.123   rr-100-07   # Replace with your local network configuration
 192.168.1.102     rr-100-07   # RR100 internal network
 ```
-Alternatively, you can alter the robot's configuration and set its `ROS_IP` environment variable to its IP address.
+Alternatively, you can alter the robot's configuration and set its `ROS_IP` environment variable to its IP address (LAN or WLAN depending on which network you're connected to).
+
+Next, because your computer's clock and the robot's computer's clock will most likely not be synchronized, you will need to configure an NTP client to synchronize to the robot's chrony NTP server. 
+
+First, install `chrony`:
+```bash
+sudo apt install chrony
+```
+Then, you will have to alter the default `/etc/chrony/chrony.conf` and add either the robot's IP addresses or the robot's name (since we added it to our `hosts` file, this will also work). After that, you will likely have to comment-out the other ntp server pools present in the configuration file :
+```
+# Use servers from the NTP Pool Project. Approved by Ubuntu Technical Board
+# on 2011-02-08 (LP: #104525). See http://www.pool.ntp.org/join.html for
+# more information.
+## Comment these out #############
+#pool 0.ubuntu.pool.ntp.org iburst
+#pool 1.ubuntu.pool.ntp.org iburst
+#pool 2.ubuntu.pool.ntp.org iburst
+#pool 3.ubuntu.pool.ntp.org iburst
+##################################
+```
+Finally, start/restart the chrony service to take these changes into effect:
+```
+sudo systemctl restart chrony.service
+```
 
 To execute the navigation package on the real robot, you must first build the docker image with the target `real` by using the provided script in a similar fashion :
 ```bash
-./build_and_run.sh --image-tag rr100-real --target real -g -a <YOUR WLAN IP ADDRESS>
+./build_and_run.sh --image-tag rr100-real --target real -g -a <YOUR IP ADDRESS>
 ```
 
 With this command, the container should be automatically built and then run. Make sure you're connected to the same network as the robot or directly connected to the robot's hotspot and then, in the newly running container, launch the navigation package like this : 
