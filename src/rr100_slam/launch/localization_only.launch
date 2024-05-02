@@ -17,6 +17,7 @@
     <param name="/use_sim_time" value="$(arg simulated)" />
 
     <arg name="map_path" default="$(find rr100_slam)/maps/map" />
+    <arg name="map_resolution" default="0.1" doc="Map gridcell resolution" />
 
     <arg name="use_pointcloud_to_laserscan_nodelet" default="false" />
     <arg name="nodelet_manager" default="rslidar_nodelet_manager" doc="Nodelet manager name" />
@@ -33,13 +34,14 @@
         <arg name="pointcloud_topic" value="$(arg pointcloud_topic)" />
     </include>
 
-    <include file="$(find rr100_slam)/launch/online_async.launch">
-        <arg name="laserscan_topic" value="$(arg laserscan_topic)" />
-        <arg name="map_path" value="$(arg map_path)"/>
-        <arg name="localization_only" value="true" />
-    </include>
-
+    <node pkg="slam_toolbox" type="localization_slam_toolbox_node" name="slam_toolbox" output="screen">
+        <rosparam command="load" file="$(find rr100_slam)/config/mapper_params_localization.yaml" />
+        <param name="map_file_name" value="$(arg map_path)"/>
+        <param name="scan_topic" value="$(arg laserscan_topic)" />
+        <param name="resolution" value="$(arg map_resolution)" />
+    </node>
+    
     <node name="rviz" type="rviz" pkg="rviz"
-        args="-d $(find cartographer_ros)/configuration_files/demo_2d.rviz"
+        args="-d $(find rr100_navigation)/rviz/rr100_navigation.rviz"
         if="$(arg use_rviz)" />
 </launch>

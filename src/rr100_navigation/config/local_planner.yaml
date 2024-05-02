@@ -14,7 +14,7 @@ TebLocalPlannerROS:
   max_samples: 500
   global_plan_overwrite_orientation: True
   allow_init_with_backwards_motion: True
-  max_global_plan_lookahead_dist: 3.0
+  max_global_plan_lookahead_dist: 3.5
   global_plan_viapoint_sep: -1
   global_plan_prune_distance: 1
   exact_arc_length: False
@@ -25,13 +25,13 @@ TebLocalPlannerROS:
   max_vel_x: .5              # m/s
   max_vel_x_backwards: .5    # m/s
   max_vel_y: 0.0              # m/s
-  max_vel_theta: 0.3          # rad/s²
-  acc_lim_x: 0.5              # m/s²
-  acc_lim_theta: 0.5          # rad/s²
+  max_vel_theta: 1.0          # rad/s²
+  acc_lim_x: 6.0              # m/s²
+  acc_lim_theta: 3.0          # rad/s²
 
   # ********************** Carlike robot parameters ********************
-  min_turning_radius: 0.55    # meters
-  wheelbase: 0.50053          # Wheelbase of our robot in meters
+  min_turning_radius: 0.55        # meters
+  wheelbase: 0.5                  # Wheelbase of our robot in meters
   cmd_angle_instead_rotvel: False # stage simulator takes the angle instead of the rotvel as input (twist message)
   # ********************************************************************
 
@@ -59,7 +59,7 @@ TebLocalPlannerROS:
   # Obstacles
   min_obstacle_dist: 0.62925 # Half width of the robot (0.32925m) + safety margin (0.10m)
   # min_obstacle_dist: 0.10
-  inflation_dist: 0.6
+  inflation_dist: 0.3
   include_costmap_obstacles: True
   costmap_obstacles_behind_robot_dist: 1.0
   obstacle_poses_affected: 15
@@ -98,8 +98,10 @@ TebLocalPlannerROS:
   weight_kinematics_turning_radius: 1
   weight_optimaltime: 1 # must be > 0
   weight_shortest_path: 0
-  weight_obstacle: 100
-  weight_inflation: 0.2
+  # weight_obstacle: 100
+  weight_obstacle: 300
+  # weight_inflation: 0.2
+  weight_inflation: 1
   weight_dynamic_obstacle: 10 # not in use yet
   weight_dynamic_obstacle_inflation: 0.2
   weight_viapoint: 1

@@ -13,3 +13,6 @@
 [submodule "src/slam_toolbox"]
 	path = src/slam_toolbox
 	url = https://github.com/SteveMacenski/slam_toolbox.git
+[submodule "src/gmcl"]
+	path = src/gmcl
+	url = https://github.com/adler-1994/gmcl.git

@@ -66,6 +66,7 @@
             <arg name="simulated" value="$(arg simulated)" />
             <arg name="use_rviz" value="false" />
             <arg name="map_path" value="$(arg posegraph_map_path)" />
+            <arg name="map_resolution" value="$(arg map_resolution)" />
         </include>
     </group>
 
