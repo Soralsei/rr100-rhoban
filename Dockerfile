@@ -11,6 +11,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
     ros-${ROS_DISTRO}-rqt \
     ros-${ROS_DISTRO}-rqt-common-plugins \
     ros-${ROS_DISTRO}-rqt-robot-plugins \
+    ros-${ROS_DISTRO}-image-transport-plugins \
     && rm -rf /var/lib/apt/lists/*
 
 # Caching stage
