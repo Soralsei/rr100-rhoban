@@ -2,10 +2,13 @@
   <arg name="initial_pose_x" default="0.0" />
   <arg name="initial_pose_y" default="0.0" />
   <arg name="initial_pose_a" default="0.0" />
+  <arg name="odom_topic" default="odometry/filtered" />
+  <arg name="scan_topic" default="rslidar_laserscan" />
   <node pkg="gmcl" type="gmcl" name="gmcl" output="screen">
     <!-- Publish scans from best pose at a max of 10 Hz -->
 
-    <param name="use_map_topic" value="true" />
+    <param name="use_map_topic" value="false" />
+    <param name="base_frame_id" value="base_footprint" />
 
     <param name="use_optimal_filter" value="true" />
     <param name="use_intelligent_filter" value="true" />
@@ -22,7 +25,7 @@
     <param name="energy_threshold_value" value="0.05" />
 
     <param name="publish_ser" value="false" />
-    <param name="tf_broadcast" value="true" />
+    <param name="tf_broadcast" value="false" />
 
     <param name="odom_model_type" value="diff" />
 
@@ -61,6 +64,7 @@
     <param name="recovery_alpha_fast" value="0.0" />
     <param name="selective_resampling" value="false" />
 
-    <remap from="odom" to="/odometry/filtered"/>
+    <remap from="odom" to="$(arg odom_topic)" />
+    <remap from="scan" to="$(arg scan_topic)" />
   </node>
 </launch>

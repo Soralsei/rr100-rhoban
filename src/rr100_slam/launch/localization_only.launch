@@ -42,6 +42,6 @@
     </node>
     
     <node name="rviz" type="rviz" pkg="rviz"
-        args="-d $(find rr100_navigation)/rviz/rr100_navigation.rviz"
+        args="-d $(find rr100_slam)/rviz/slam_toolbox_localization.rviz"
         if="$(arg use_rviz)" />
 </launch>
