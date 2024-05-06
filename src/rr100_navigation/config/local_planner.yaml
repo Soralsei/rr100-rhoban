@@ -1,4 +1,4 @@
-controller_frequency: 10.0
+controller_frequency: 6.0
 recovery_behaviour_enabled: True
 # Prohibit in place rotation commands since the robot cannot rotate in place (double Ackerman motor steering)
 clearing_rotation_allowed: False
@@ -9,12 +9,12 @@ TebLocalPlannerROS:
 
   # Trajectory
   teb_autosize: True
-  dt_ref: 0.3
-  dt_hysteresis: 0.1
-  max_samples: 500
+  dt_ref: 0.167
+  dt_hysteresis: 0.0167
+  max_samples: 450
   global_plan_overwrite_orientation: True
   allow_init_with_backwards_motion: True
-  max_global_plan_lookahead_dist: 3.5
+  max_global_plan_lookahead_dist: 2.5
   global_plan_viapoint_sep: -1
   global_plan_prune_distance: 1
   exact_arc_length: False
@@ -22,15 +22,15 @@ TebLocalPlannerROS:
   publish_feedback: False
 
   # Robot
-  max_vel_x: .5              # m/s
-  max_vel_x_backwards: .5    # m/s
+  max_vel_x: 0.6              # m/s
+  max_vel_x_backwards: 0.6    # m/s
   max_vel_y: 0.0              # m/s
   max_vel_theta: 1.0          # rad/s²
   acc_lim_x: 6.0              # m/s²
-  acc_lim_theta: 3.0          # rad/s²
+  acc_lim_theta: 1.0          # rad/s²
 
   # ********************** Carlike robot parameters ********************
-  min_turning_radius: 0.55        # meters
+  min_turning_radius: 0.60        # meters
   wheelbase: 0.5                  # Wheelbase of our robot in meters
   cmd_angle_instead_rotvel: False # stage simulator takes the angle instead of the rotvel as input (twist message)
   # ********************************************************************
@@ -59,7 +59,7 @@ TebLocalPlannerROS:
   # Obstacles
   min_obstacle_dist: 0.42925 # Half width of the robot (0.32925m) + safety margin (0.10m)
   # min_obstacle_dist: 0.10
-  inflation_dist: 0.3
+  inflation_dist: 0.6
   include_costmap_obstacles: True
   costmap_obstacles_behind_robot_dist: 1.0
   obstacle_poses_affected: 15
@@ -76,15 +76,16 @@ TebLocalPlannerROS:
     cluster_min_pts: 2
     ransac_inlier_distance: 0.15
     ransac_min_inliers: 10
-    ransac_no_iterations: 1000
+    ransac_no_iterations: 500
+    # ransac_no_iterations: 1000
     ransac_remainig_outliers: 3
     ransac_convert_outlier_pts: True
     ransac_filter_remaining_outlier_pts: False
     convex_hull_min_pt_separation: 0.1
 
   # Optimization
-  no_inner_iterations: 5
-  no_outer_iterations: 4
+  no_inner_iterations: 4
+  no_outer_iterations: 3
   optimization_activate: True
   optimization_verbose: False
   penalty_epsilon: 0.1
@@ -124,7 +125,8 @@ TebLocalPlannerROS:
   obstacle_heading_threshold: 0.45
   switching_blocking_period: 0.0
   viapoints_all_candidates: True
-  delete_detours_backwards: True
+  delete_detours_backwards: False
+  # delete_detours_backwards: True
   max_ratio_detours_duration_best_duration: 3.0
   visualize_hc_graph: False
   visualize_with_time_as_z_axis_scale: False
