@@ -94,7 +94,7 @@
 
         <arg name="cmd_vel_topic" value="$(arg cmd_vel_topic)" />
         <arg name="scan_topic" value="$(arg laserscan_topic)" />
-        <arg name="odom_topic" value="/odometry/filtered" />
+        <arg name="odom_topic" value="$(arg odom_topic)" />
 
         <arg name="cam_point_cloud_enabled" value="$(arg cam_point_cloud_enabled)" />
         <arg name="cam_point_cloud_topic" value="$(arg cam_point_cloud_topic)" />

@@ -1,4 +1,4 @@
-controller_frequency: 6.0
+controller_frequency: 10.0
 recovery_behaviour_enabled: True
 # Prohibit in place rotation commands since the robot cannot rotate in place (double Ackerman motor steering)
 clearing_rotation_allowed: False
@@ -57,7 +57,7 @@ TebLocalPlannerROS:
   free_goal_vel: False
 
   # Obstacles
-  min_obstacle_dist: 0.62925 # Half width of the robot (0.32925m) + safety margin (0.10m)
+  min_obstacle_dist: 0.42925 # Half width of the robot (0.32925m) + safety margin (0.10m)
   # min_obstacle_dist: 0.10
   inflation_dist: 0.3
   include_costmap_obstacles: True
@@ -98,10 +98,10 @@ TebLocalPlannerROS:
   weight_kinematics_turning_radius: 1
   weight_optimaltime: 1 # must be > 0
   weight_shortest_path: 0
-  # weight_obstacle: 100
-  weight_obstacle: 300
-  # weight_inflation: 0.2
-  weight_inflation: 1
+  weight_obstacle: 100
+  # weight_obstacle: 300
+  weight_inflation: 0.2
+  # weight_inflation: 1
   weight_dynamic_obstacle: 10 # not in use yet
   weight_dynamic_obstacle_inflation: 0.2
   weight_viapoint: 1
