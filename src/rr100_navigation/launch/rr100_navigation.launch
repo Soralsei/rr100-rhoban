@@ -103,6 +103,13 @@
         <arg name="global_costmap_height" value="$(arg global_costmap_height)" />
     </include>
 
+    <include file="$(find rr100_drive_amp)/launch/drive_amp.launch">
+        <arg name="twist_in" value="$(arg cmd_vel_topic)"/>
+        <arg name="odom_in" value="$(arg odom_topic)"/>
+        
+        <arg name="twist_out" value="/cmd_vel"/>
+    </include>
+
     <node name="rviz" type="rviz" pkg="rviz"
         args="-d $(find rr100_navigation)/rviz/rr100_navigation.rviz"
         if="$(arg use_rviz)">

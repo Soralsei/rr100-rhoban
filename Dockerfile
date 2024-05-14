@@ -81,8 +81,6 @@ RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
     && ls packages | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
     && rm -rf packages
 
-# ENV WORKSPACE=$WORKSPACE
-
 ENV WORKSPACE=$WORKSPACE
 RUN sed --in-place --expression \
     '$isource "$WORKSPACE/devel/setup.bash"' \

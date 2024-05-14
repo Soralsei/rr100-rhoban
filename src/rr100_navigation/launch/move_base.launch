@@ -35,7 +35,6 @@
         <rosparam file="$(find rr100_navigation)/config/global_costmap_static.yaml" command="load"
             ns="global_costmap" if="$(arg use_static_map)" />
 
-        <!-- global costmap with laser, for odom_navigation_demo -->
         <rosparam file="$(find rr100_navigation)/config/global_costmap_slam.yaml" command="load"
             ns="global_costmap" unless="$(arg use_static_map)" />
             
@@ -49,6 +48,8 @@
 
         <param name="base_global_planner" value="global_planner/GlobalPlanner" />
         <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+
+        <param name="planner_frequency" value="1.0" />
         
         <remap from="odom" to="$(arg odom_topic)" />
         <remap from="scan" to="$(arg scan_topic)" />

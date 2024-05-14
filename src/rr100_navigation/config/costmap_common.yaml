@@ -28,26 +28,26 @@ obstacles_layer:
       clearing: True,
     }
 
-voxel_layer:
-  max_obstacle_height: 1.6, # meters (double the robot's height)
-  track_unknown_space: True
-  observation_sources: lidar_points camera_points #if using realsense point cloud
-  lidar_points:
-    {
-      min_obstacle_height: 0.05, # meters
-      data_type: PointCloud2,
-      topic: rslidar_points,
-      marking: True,
-      clearing: True
-    }
-  # camera_points:
-  #   {
-  #     min_obstacle_height: 0.05, # meters
-  #     data_type: PointCloud2,
-  #     topic: depth/points,
-  #     marking: True,
-  #     clearing: True,
-  #   }
+# voxel_layer:
+#   max_obstacle_height: 1.6, # meters (double the robot's height)
+#   track_unknown_space: True
+#   observation_sources: lidar_points camera_points #if using realsense point cloud
+#   lidar_points:
+#     {
+#       min_obstacle_height: 0.05, # meters
+#       data_type: PointCloud2,
+#       topic: rslidar_points,
+#       marking: True,
+#       clearing: True
+#     }
+#   # camera_points:
+#   #   {
+#   #     min_obstacle_height: 0.05, # meters
+#   #     data_type: PointCloud2,
+#   #     topic: depth/points,
+#   #     marking: True,
+#   #     clearing: True,
+#   #   }
 
 inflation_layer:
   inflation_radius: 1.75
