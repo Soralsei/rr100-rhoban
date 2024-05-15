@@ -103,12 +103,21 @@
         <arg name="global_costmap_height" value="$(arg global_costmap_height)" />
     </include>
 
-    <!-- <include file="$(find rr100_drive_amp)/launch/drive_amp.launch">
+    <include file="$(find rr100_drive_amp)/launch/drive_amp.launch">
         <arg name="twist_in" value="$(arg cmd_vel_topic)"/>
         <arg name="odom_in" value="$(arg odom_topic)"/>
         
-        <arg name="twist_out" value="/cmd_vel"/>
-    </include> -->
+        <arg name="twist_out" value="corrected_cmd_vel"/>
+    </include>
+
+    <include file="$(find yocs_velocity_smoother)/launch/velocity_smoother.launch">
+        <arg name="node_name"             value="velocity_smoother"/>
+        <arg name="nodelet_manager_name"  value="nodelet_manager"/>
+        <arg name="config_file"           value="$(find yocs_velocity_smoother)/param/rr100_smoother.yaml"/>
+        <arg name="raw_cmd_vel_topic"     value="corrected_cmd_vel"/>
+        <arg name="smooth_cmd_vel_topic"  value="cmd_vel"/>
+        <arg name="odom_topic"            default="$(arg odom_topic)"/>
+    </include>
 
     <node name="rviz" type="rviz" pkg="rviz"
         args="-d $(find rr100_navigation)/rviz/rr100_navigation.rviz"
