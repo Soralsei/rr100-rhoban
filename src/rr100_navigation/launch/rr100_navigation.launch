@@ -114,7 +114,7 @@
         <arg name="config_file"           value="$(find yocs_velocity_smoother)/param/rr100_smoother.yaml"/>
         <arg name="raw_cmd_vel_topic"     value="corrected_cmd_vel"/>
         <arg name="smooth_cmd_vel_topic"  value="cmd_vel"/>
-        <arg name="odom_topic"            default="$(arg odom_topic)"/>
+        <arg name="odom_topic"            value="$(arg odom_topic)"/>
     </include>
 
     <node name="rviz" type="rviz" pkg="rviz"
