@@ -67,7 +67,7 @@ class DriveAmp():
         is_close = False
         with self.target_lock:
             new_target = np.reshape(np.concatenate(conversion.kinematics_to_numpy(twist), axis=0), (2, 3))
-            is_close = np.allclose(new_target, self.target atol=1e-3)
+            is_close = np.allclose(new_target, self.target, atol=1e-3)
             self.target = new_target
            
         if not is_close: 
