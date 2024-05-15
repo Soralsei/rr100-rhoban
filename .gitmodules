@@ -16,6 +16,3 @@
 [submodule "src/gmcl"]
 	path = src/gmcl
 	url = https://github.com/adler-1994/gmcl.git
-[submodule "src/teb_local_planner"]
-	path = src/teb_local_planner
-	url = https://github.com/Soralsei/teb_local_planner.git
