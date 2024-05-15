@@ -110,7 +110,9 @@
         <arg name="twist_out" value="corrected_cmd_vel"/>
     </include>
 
-    <include file="$(find yocs_velocity_smoother)/launch/standalone.launch">
+    <node pkg="nodelet" type="nodelet" name="velocity_smoother_nodelet_manager" args="manager"/>
+
+    <include file="$(find yocs_velocity_smoother)/launch/velocity_smoother.launch">
         <arg name="config_file"           value="$(find yocs_velocity_smoother)/param/rr100_smoother.yaml"/>
         <arg name="raw_cmd_vel_topic"     value="corrected_cmd_vel"/>
         <arg name="smooth_cmd_vel_topic"  value="cmd_vel"/>
