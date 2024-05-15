@@ -49,7 +49,7 @@
         <param name="base_global_planner" value="global_planner/GlobalPlanner" />
         <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
 
-        <param name="planner_frequency" value="1.0" />
+        <!-- <param name="planner_frequency" value="1.0" /> -->
         
         <remap from="odom" to="$(arg odom_topic)" />
         <remap from="scan" to="$(arg scan_topic)" />

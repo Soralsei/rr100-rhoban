@@ -1,4 +1,4 @@
-controller_frequency: 10
+controller_frequency: 15
 recovery_behaviour_enabled: False
 # Prohibit in place rotation commands since the robot cannot rotate in place (double Ackerman motor steering)
 clearing_rotation_allowed: False
@@ -9,9 +9,9 @@ TebLocalPlannerROS:
 
   # Trajectory
   teb_autosize: True
-  dt_ref: 0.1
-  dt_hysteresis: 0.01
-  max_samples: 500
+  dt_ref: 0.125
+  dt_hysteresis: 0.042
+  max_samples: 400
   global_plan_overwrite_orientation: False
   allow_init_with_backwards_motion: True
   # max_global_plan_lookahead_dist: 2.5
@@ -19,16 +19,16 @@ TebLocalPlannerROS:
   global_plan_viapoint_sep: 0.2
   global_plan_prune_distance: 1
   exact_arc_length: False
-  feasibility_check_no_poses: 2
+  feasibility_check_no_poses: 5
   publish_feedback: False
-
+ 
   # Robot
-  max_vel_x: 0.5              # m/s
-  max_vel_x_backwards: 0.5    # m/s
+  max_vel_x: 0.6              # m/s
+  max_vel_x_backwards: 0.6    # m/s
   max_vel_y: 0.0              # m/s
-  max_vel_theta: 1.0          # rad/s²
-  acc_lim_x: 5.0              # m/s²
-  acc_lim_theta: 1.5          # rad/s²
+  max_vel_theta: 1.0          # rad/s
+  acc_lim_x: 6.0              # m/s²
+  acc_lim_theta: 0.5          # rad/s²
 
   # ********************** Carlike robot parameters ********************
   min_turning_radius: 0.60        # meters

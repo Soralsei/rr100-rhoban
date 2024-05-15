@@ -70,7 +70,7 @@ class DriveAmp():
             is_close = np.allclose(new_target, self.target)
             self.target = new_target
            
-        if is_close: 
+        if not is_close: 
             with self.integrator_lock:
                 self.cumulated_error.fill(0)
     
