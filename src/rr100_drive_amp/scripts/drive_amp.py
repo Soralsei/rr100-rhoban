@@ -38,6 +38,7 @@ class DriveAmp():
         frequency = rospy.get_param('frequency', 30.0)
         
         self.target = np.zeros((2, 3), dtype=np.float32)
+        self.current = np.zeros((2, 3), dtype=np.float32)
         
         self.k_p, self.k_i, self.k_d = gains['p'], gains['i'], gains['d']
         self.cumulated_error = np.zeros((2, 3), dtype=np.float32)
@@ -49,7 +50,7 @@ class DriveAmp():
         self.twist_sub = rospy.Subscriber("twist_in", Twist, self._twist_callback, queue_size=10)
         self.odom_sub = rospy.Subscriber("odom_in", Odometry, self._odom_callback, queue_size=10)
         
-        self.target_lock = Lock()
+        self.receive_lock = Lock()
         self.integrator_lock = Lock()
         
         self.previous_time = rospy.get_rostime()
@@ -65,18 +66,19 @@ class DriveAmp():
     
     def _twist_callback(self, twist: Twist) -> None:
         is_close = False
-        with self.target_lock:
-            new_target = np.reshape(np.concatenate(conversion.kinematics_to_numpy(twist), axis=0), (2, 3))
-            is_close = np.allclose(new_target, self.target, atol=1e-3)
-            self.target = new_target
+        with self.receive_lock:
+            self.target = np.reshape(np.concatenate(conversion.kinematics_to_numpy(twist), axis=0), (2, 3))
+            is_close = np.allclose(self.target, self.current, atol=1e-3)
            
         if not is_close: 
             with self.integrator_lock:
                 self.cumulated_error.fill(0)
     
     def _odom_callback(self, odometry: Odometry) -> None:             
+        current_time = rospy.get_rostime()
+        
         target = None
-        with self.target_lock:
+        with self.receive_lock:
             target = self.target.copy()
             
         if np.allclose(target, 0, atol=1e-5): 
@@ -85,10 +87,10 @@ class DriveAmp():
             self.pub.publish(message)
             return
         
-        current_time = rospy.get_rostime()
         
         linear, angular, _ = conversion.kinematics_with_covariance_to_numpy(odometry.twist)
-        current = np.reshape(np.concatenate((linear, angular)), (2, 3))
+        with self.receive_lock:
+            self.current = np.reshape(np.concatenate((linear, angular)), (2, 3))
             
         dt = (current_time - self.previous_time).to_sec()
         
@@ -96,7 +98,7 @@ class DriveAmp():
             return
         
         with self.integrator_lock:
-            error = target - current
+            error = target - self.current
             self.cumulated_error += error * dt
             error_rate = (error - self.previous_error) / dt
         
