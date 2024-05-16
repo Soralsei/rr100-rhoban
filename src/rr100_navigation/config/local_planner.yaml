@@ -128,9 +128,7 @@ TebLocalPlannerROS:
   switching_blocking_period: 0.0
   viapoints_all_candidates: True
   # delete_detours_backwards: False # modified
-  delete_detours_backwards: True # default: 2.0,
-    i: 0.75,
-    d: 0.005
+  delete_detours_backwards: True # default
   max_ratio_detours_duration_best_duration: 3.0
   visualize_hc_graph: False
   visualize_with_time_as_z_axis_scale: False
