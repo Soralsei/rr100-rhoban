@@ -1,4 +1,4 @@
-controller_frequency: 
+controller_frequency: 10.0
 recovery_behaviour_enabled: False
 # Prohibit in place rotation commands since the robot cannot rotate in place (double Ackerman motor steering)
 clearing_rotation_allowed: False
