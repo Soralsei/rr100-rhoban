@@ -12,6 +12,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
     ros-${ROS_DISTRO}-rqt-common-plugins \
     ros-${ROS_DISTRO}-rqt-robot-plugins \
     ros-${ROS_DISTRO}-image-transport-plugins \
+    git python3-wstool python3-rosdep ninja-build stow \
     && rm -rf /var/lib/apt/lists/*
 
 # Caching stage
@@ -49,13 +50,11 @@ RUN mkdir ../simulation \
 FROM apt-depends as builder
 ARG WORKSPACE
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    git python3-wstool python3-rosdep ninja-build stow
-
-# Install RR100 ros package dependencies
+# Install RR100 ros packages
 COPY debfiles/* ./debfiles/
 RUN python3 debfiles/deploy_debians_noetic.py debfiles
 
+# Install all workspace packages dependencies
 WORKDIR ${WORKSPACE}
 COPY --from=cacher /tmp/$WORKSPACE/src ./src
 RUN . /opt/ros/${ROS_DISTRO}/setup.sh \

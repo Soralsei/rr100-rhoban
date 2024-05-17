@@ -21,7 +21,7 @@
 - `move_base` : http://wiki.ros.org/move_base
   - `costmap_2d` : http://wiki.ros.org/costmap_2d
     - `costmap_2d::StaticLayer` : http://wiki.ros.org/costmap_2d/hydro/staticmap
-    - `costmap_2d::VoxelLayer` : http://wiki.ros.org/costmap_2d/hydro/obstacles#VoxelCostmapPlugin
+    - `costmap_2d::ObstacleLayer` : http://wiki.ros.org/costmap_2d/hydro/obstacles#ObstacleCostmapPlugin
     - `costmap_2d::InflationLayer` : http://wiki.ros.org/costmap_2d/hydro/inflation
   - `global_planner` : http://wiki.ros.org/global_planner
   - `teb_local_planner` : http://wiki.ros.org/teb_local_planner
@@ -31,15 +31,9 @@
 
 
 ## Docker basics
-This section is useful for those who either don't have access to a PC running Ubuntu 18.04 or want to avoid installing every dependency of this project to their computer by keeping it in a standalone container.
-
-### Architecture basics
-Docker is based on a client-server architecture with the client talking to a local or remote daemon (`dockerd`) which handles building images, running and distributing containers. These images and containers are called *Docker objects*. 
-
-<div>
-  <img src="resources/docker-architecture.webp"/>
-  <p align="center"><i>Docker's general architecture (Source: <a href="https://docs.docker.com/get-started/overview/#docker-architecture">Docker's documentation</a>)</i></p>
-</div>
+This section is useful for those who aren't familiar with Docker and either don't have access to a PC running Ubuntu 18.04 or want to avoid installing every dependency of this project to their computer by keeping it in a standalone container.
+<details>
+<summary>Click here to expand</summary>
 
 #### Images
 An image is a read-only template with instructions for creating a Docker container. Often, an image is based on another image, with some additional customization. For example, you may build an image which is based on the ubuntu image, but installs the Apache web server and your application, as well as the configuration details needed to make your application run.
@@ -108,13 +102,14 @@ Example command:
 ```console
 user@machine:~/hello_world$ docker run -ti --name hello-container bash
 ```
+</details>
 
 ## ROS basics
 > [!NOTE]
 > Under construction
 
-## Dockerfile structure
-The Dockerfile for this project is structured in a multi-stage manner and inherits from the official Docker `ros:noetic` image. There are in total 3 building stages and 2 target stages in our building process. To optimize build times, we define 2 independent stages `apt-depends` and `cacher` that can be run in parallel by Docker's builder. The former stage's purpose is to download and install dependencies and useful packages for this project. This stage is later used as a base for our `builder` stage that will handleactually building this project.
+## Project Dockerfile structure
+The Dockerfile for this project is structured in a multi-stage manner and inherits from the official Docker `ros:noetic` image. There are in total 3 building stages and 2 target stages in our building process. To optimize build times, we define 2 independent stages `apt-depends` and `cacher` that can be run in parallel by Docker's builder. The former stage's purpose is to download and install dependencies and useful packages for this project. This stage is later used as a base for our `builder` stage that will handle the actual building of this project.
 
 The latter stage (`cacher`) is used to cache `package.xml` files from our project's packages which declare these packages dependencies as they're less likely to change during development :
 ```Dockerfile
@@ -131,9 +126,56 @@ RUN mkdir -p /tmp/opt && \
 ```
 We copy the source directory to this stage and copy every `package.xml`/`CATKIN_IGNORE` file to a temporary directory while keeping the original source tree structure. In this same stage, we separate dependencies from simulator packages and from actual project packages to be able to compile them in separate docker layers later.
 
-Next comes the `builder` stage that inherits from the `apt-depends` stage. In `builder` we first copy the `package.xml` files from the `cacher` stage into our final workspace and run `rosdep install` to install our packages' dependencies. Then, we copy our separated packages and compile them in their own layers to make use of Docker's caching capabilities.
+Next comes the `builder` stage that inherits from the `apt-depends` stage. In `builder` we first install the RR100 ROS packages given aongside the robot, then we copy the `package.xml` files from the `cacher` stage into our final workspace and run `rosdep install` to install our packages' dependencies :
+```Dockerfile
+FROM apt-depends as builder
+ARG WORKSPACE
 
-Finally we have the two target stages, `simulation` and `real`. In `simulation`, we copy the simulation packages into our workspace and compile them separately whereas in `real`, we skip these packages as they are not needed and set our `ROS_MASTER_URI` to the RR100 robot and our `ROS_IP` to our IP address.
+# Install RR100 ros packages
+COPY debfiles/* ./debfiles/
+RUN python3 debfiles/deploy_debians_noetic.py debfiles
+
+# Install all workspace packages dependencies
+WORKDIR ${WORKSPACE}
+COPY --from=cacher /tmp/$WORKSPACE/src ./src
+RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
+    && apt-get update \
+    && rosdep update \
+    && rosdep install -r -y --from-paths ./src --ignore-src --rosdistro ${ROS_DISTRO} \
+    && apt-get upgrade -y \
+    && rm -rf /var/lib/apt/lists/*
+```
+
+Then, we copy our separated packages and compile them in their own layers to make use of Docker's caching capabilities :
+
+```Dockerfile
+# Copy files from cacher stage
+COPY --from=cacher $WORKSPACE/src/ .
+
+# Compile dependencies as separate layer for better cache
+RUN mv CMakeLists.txt src \
+    && . /opt/ros/${ROS_DISTRO}/setup.sh \
+    && cp -r dependencies/* src \
+    && ls dependencies | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
+    && rm -rf dependencies
+# ... same for other isolated packages
+```
+
+Finally we have the two target stages, `simulation` and `real`. In `simulation`, we copy the simulation packages into our workspace and compile them separately whereas in `real`, we skip these packages as they are not needed and set our `ROS_MASTER_URI` to the RR100 robot and our `ROS_IP` to our IP address :
+```Dockerfile
+FROM builder as simulation
+RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
+    && cp -r simulation/* src \
+    && ls simulation | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
+    && rm -rf simulation
+
+FROM builder as real
+ARG IP
+ENV ROS_MASTER_URI=http://rr-100-07:11311
+ENV ROS_IP=${IP}
+```
+> [!NOTE]
+> The `$IP` argument is passed as a build argument by the build_and_run.sh script; else you can define it at the top of the Dockerfile.
 
 ## Build and run script
 > [!NOTE]
@@ -141,11 +183,11 @@ Finally we have the two target stages, `simulation` and `real`. In `simulation`,
 
 ## Overview of the project
 ### Package interaction
-This project makes use of many packages oriented towards autonomous robot navigation, all of which are standard in the ROS ecosystem. These packages all handle a different aspect of navigation, namely mapping, localizing, and path planning for the robot and we will go over how each of them works in a later section.
+This project makes use of many packages oriented towards autonomous robot navigation, many of which are standard in the ROS ecosystem. These packages all handle a different aspect of navigation, namely mapping, localizing, and path planning for the robot and we will go over how each of them works in a later section.
 
 For now, let's focus on how each of these packages are integrated in our autonomous navigation package and how they intreact with each other. Below, a diagram illustrates how each package interacts with the robot and the other packages.
 <div>
-  <img src="resources/rr100_package_diagram.png"/><br>
+  <img src="resources/rr100_package_diagram.svg"/><br>
   <p align="center"><i>RR100 navigation package diagram</i></p>
 </div>
 
@@ -153,11 +195,15 @@ First, `rslidar_laserscan` (internally uses `pointcloud_to_laserscan`) takes in 
 
 In parallel, `robot_localization` (a pose estimation package built with Kalman filters) takes in wheel encoder odometry data and IMU data published by the robot and fuses these sensor measurements to estimate to robot's pose in the odometry frame and publish this pose to the `tf` tree (which is used by `slam_toolbox`).
 
-Finally `move_base`, which can be subdivided into 3 packages (2 path planning packages and a costmap computing package), uses sensor data, a SLAM or a static map, and the robot's pose estimation to :
+Subsequently `move_base`, which can be subdivided into 3 packages (2 path planning packages and a costmap computing package), uses sensor data, a SLAM or a static map, and the robot's pose estimation to :
 - compute costmaps (global and local) in a *grid* format which are used by both planners to plan a path towards a goal pose 
 - plan a global path towards the goal pose by using the global costmap as a graph and finding the least costly path (in terms of distances and cost on the costmap) from the starting pose node to the goal pose node
 - plan a local path to follow the global path (which includes unplanned obstacle avoidance) using the local costmap in a similar fashion to the global planner
 - compute velocity commands to follow the local path
+
+These velocity commands are then corrected by the `rr100_drive_amp` package which read our odometry estimations and target velocities (computed by `move_base`) and uses this data to compute corrections (using a PID) to apply to the computed velocities so that our odometry reaches these target velocities.
+
+Finally, `yocs_velocity_smoother` takes in our corrected velocities computed by `rr100_drive_amp` and *smoothes* them in respect to our robot's maximum velocities and accelerations (linear and angular).
 
 ### Node and topic interaction
 > [!NOTE]
@@ -173,4 +219,6 @@ Finally `move_base`, which can be subdivided into 3 packages (2 path planning pa
 ### rslidar_laserscan
 ### rr100_slam
 ### rr100_localization
+### rr100_drive_amp
+### yocs_velocity_smoother
 ### rr100_navigation
