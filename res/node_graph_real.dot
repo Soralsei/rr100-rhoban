@@ -1,0 +1,280 @@
+digraph graphname {
+	graph [
+		compound=True,
+		rank=same,
+		rankdir=TB,
+		ranksep=1.0,
+		nodesep=0.5
+	];
+	#node [label="\N"];
+	subgraph cluster___joy_teleop {
+		graph [
+			compound=True,
+			label="/joy_teleop",
+			style=bold
+		];
+		t___joy_teleop__cmd_vel	[
+			label="/joy_teleop/cmd_vel"
+			shape=box,
+			tooltip="topic:/joy_teleop/cmd_vel"];
+		t___joy_teleop__joy	[
+			label="/joy_teleop/joy"
+			shape=box,
+			tooltip="topic:/joy_teleop/joy"];
+		n___joy_teleop__joy_safety_node	[
+			label="/joy_teleop/joy_safety_node"
+			shape=ellipse,
+			tooltip="/joy_teleop/joy_safety_node"];
+		t___joy_teleop__joy -> n___joy_teleop__joy_safety_node	[penwidth=1.25];
+		n___joy_teleop__teleop_twist_joy	[
+			label="/joy_teleop/teleop_twist_joy"
+			shape=ellipse,
+			tooltip="/joy_teleop/teleop_twist_joy"];
+		t___joy_teleop__joy -> n___joy_teleop__teleop_twist_joy	[penwidth=1.25];
+		n___joy_teleop__joy_node	[
+			label="/joy_teleop/joy_node"
+			shape=ellipse,
+			tooltip="/joy_teleop/joy_node"];
+		n___joy_teleop__joy_node -> t___joy_teleop__joy	[penwidth=1.25];
+		n___joy_teleop__teleop_twist_joy -> t___joy_teleop__cmd_vel	[penwidth=1.25];
+	}
+	subgraph cluster___move_base {
+		graph [
+			compound=True,
+			label="/move_base",
+			style=bold
+		];
+		t___move_base__goal	[
+			label="/move_base/goal"
+			shape=box,
+			tooltip="topic:/move_base/goal"];
+	}
+	subgraph cluster___rr100_steering_controller {
+		graph [
+			compound=True,
+			label="/rr100_steering_controller",
+			style=bold
+		];
+		t___rr100_steering_controller__odom	[
+			label="/rr100_steering_controller/odom"
+			shape=box,
+			tooltip="topic:/rr100_steering_controller/odom"];
+		t___rr100_steering_controller__cmd_vel	[
+			label="/rr100_steering_controller/cmd_vel"
+			shape=box,
+			tooltip="topic:/rr100_steering_controller/cmd_vel"];
+	}
+	subgraph cluster___rslidar_nodelet_manager {
+		graph [
+			compound=True,
+			label="/rslidar_nodelet_manager",
+			style=bold
+		];
+	}
+    subgraph cluster___rr100 {
+		graph [
+			compound=True,
+			label="/rr100",
+			style=bold
+		];
+		t___rr100__estop_cmd	[
+			label="/rr100/estop_cmd"
+			shape=box,
+			tooltip="topic:/rr100/estop_cmd"];
+		t___rr100__controller_cmd	[
+			label="/rr100/controller_cmd"
+			shape=box,
+			tooltip="topic:/rr100/controller_cmd"];
+		t___rr100__docked	[
+			label="/rr100/docked"
+			shape=box,
+			tooltip="topic:/rr100/docked"];
+	}
+	subgraph cluster___move_base_rr100 {
+		graph [
+			compound=True,
+			label="/move_base_rr100",
+			style=bold
+		];
+		
+	    n___move_base_rr100	[
+    		label="/move_base_rr100"
+    		shape=ellipse,
+    		tooltip="/move_base_rr100"];
+		subgraph cluster___move_base_rr100__local_costmap {
+			graph [
+				compound=True,
+				style=bold
+			];
+			t___move_base_rr100__local_costmap__footprint	[
+				label="/move_base_rr100/local_costmap/footprint"
+				shape=box,
+				tooltip="topic:/move_base_rr100/local_costmap/footprint"];
+		}
+		subgraph cluster___move_base_rr100__global_costmap {
+			graph [
+				compound=True,
+				label="/move_base_rr100/global_costmap",
+				style=bold
+			];
+			t___move_base_rr100__global_costmap__footprint	[
+				label="/move_base_rr100/global_costmap/footprint"
+				shape=box,
+				tooltip="topic:/move_base_rr100/global_costmap/footprint"];
+		}
+	}
+	subgraph cluster___imu {
+		graph [
+			compound=True,
+			label="/imu",
+			style=bold
+		];
+		t___imu__data	[
+			label="/imu/data"
+			shape=box,
+			tooltip="topic:/imu/data"];
+	}
+	
+	n___rr100_state	[
+		label="/rr100_state"
+		shape=ellipse,
+		tooltip="/rr100_state"];
+	n___twist_mux	[
+		label="/twist_mux"
+		shape=ellipse,
+		tooltip="/twist_mux"];
+	t___joy_teleop__cmd_vel -> n___twist_mux	[penwidth=1.25];
+	n___joy_teleop__joy_safety_node -> t___rr100__estop_cmd	[penwidth=1.25];
+	n___joy_teleop__joy_safety_node -> t___rr100__controller_cmd	[penwidth=1.25];
+
+	t___move_base__goal -> n___move_base_rr100	[penwidth=1.25];
+	n___ekf_se_odom	[
+		label="/ekf_se_odom"
+		shape=ellipse,
+		tooltip="/ekf_se_odom"];
+	t___rr100_steering_controller__odom -> n___ekf_se_odom	[penwidth=1.25];
+	t___rr100_steering_controller__odom -> n___move_base_rr100	[penwidth=1.25];
+	n___velocity_smoother_nodelet_manager	[
+		label="/velocity_smoother_nodelet_manager"
+		shape=ellipse,
+		tooltip="/velocity_smoother_nodelet_manager"];
+	t___rr100_steering_controller__odom -> n___velocity_smoother_nodelet_manager	[penwidth=1.25];
+	n___drive_amp_node	[
+		label="/drive_amp_node"
+		shape=ellipse,
+		tooltip="/drive_amp_node"];
+	t___rr100_steering_controller__odom -> n___drive_amp_node	[penwidth=1.25];
+	n___rr100_node	[
+		label="/rr100_node"
+		shape=ellipse,
+		tooltip="/rr100_node"];
+	t___rr100_steering_controller__cmd_vel -> n___rr100_node	[penwidth=1.25];
+	t___move_base_rr100__local_costmap__footprint -> n___move_base_rr100	[penwidth=1.25];
+	t___move_base_rr100__global_costmap__footprint -> n___move_base_rr100	[penwidth=1.25];
+	n___rslidar_nodelet_manager	[
+		label="/rslidar_nodelet_manager"
+		shape=ellipse,
+		tooltip="/rslidar_nodelet_manager"];
+
+
+
+	t___rr100__estop_cmd -> n___rr100_node	[penwidth=1.25];
+	t___rr100__estop_cmd -> n___rr100_state	[penwidth=1.25];
+	t___rr100__controller_cmd -> n___rr100_node	[penwidth=1.25];
+
+	t___imu__data -> n___ekf_se_odom	[penwidth=1.25];
+	n_n__tf	[
+		label="/tf"
+		shape=box3d,
+		tooltip="topic:/tf"];
+	t___cmd_vel	[
+		label="/cmd_vel"
+		shape=box,
+		tooltip="topic:/cmd_vel"];
+	t___cmd_vel -> n___twist_mux	[penwidth=1.25];
+
+	n___rr100_arduino_node	[
+		label="/rr100_arduino_node"
+		shape=ellipse,
+		tooltip="/rr100_arduino_node"];
+
+	t___rslidar_laserscan	[
+		label="/rslidar_laserscan"
+		shape=box,
+		tooltip="topic:/rslidar_laserscan"];
+	t___rslidar_laserscan -> n___move_base_rr100	[penwidth=1.25];
+	n___slam_toolbox	[
+		label="/slam_toolbox"
+		shape=ellipse,
+		tooltip="/slam_toolbox"];
+	t___rslidar_laserscan -> n___slam_toolbox	[penwidth=1.25];
+	t___set_brakes	[
+		label="/set_brakes"
+		shape=box,
+		tooltip="topic:/set_brakes"];
+	t___set_brakes -> n___rr100_arduino_node	[penwidth=1.25];
+	t___joint_states	[
+		label="/joint_states"
+		shape=box,
+		tooltip="topic:/joint_states"];
+	n___robot_state_publisher	[
+		label="/robot_state_publisher"
+		shape=ellipse,
+		tooltip="/robot_state_publisher"];
+	t___joint_states -> n___robot_state_publisher	[penwidth=1.25];
+
+	t___map	[
+		label="/map"
+		shape=box,
+		tooltip="topic:/map"];
+	t___map -> n___move_base_rr100	[penwidth=1.25];
+	t___corrected_cmd_vel	[
+		label="/corrected_cmd_vel"
+		shape=box,
+		tooltip="topic:/corrected_cmd_vel"];
+	t___corrected_cmd_vel -> n___velocity_smoother_nodelet_manager	[penwidth=1.25];
+
+	t___cmd_vel_raw	[
+		label="/cmd_vel_raw"
+		shape=box,
+		tooltip="topic:/cmd_vel_raw"];
+	t___cmd_vel_raw -> n___drive_amp_node	[penwidth=1.25];
+	t___rslidar_points	[
+		label="/rslidar_points"
+		shape=box,
+		tooltip="topic:/rslidar_points"];
+	t___rslidar_points -> n___rslidar_nodelet_manager	[penwidth=1.25];
+	n_n__tf -> n___ekf_se_odom	[penwidth=1.25];
+	n_n__tf -> n___rslidar_nodelet_manager	[penwidth=1.25];
+	n_n__tf -> n___move_base_rr100	[penwidth=1.25];
+	n_n__tf -> n___slam_toolbox	[penwidth=1.25];
+
+	n___ekf_se_odom -> n_n__tf	[penwidth=1.25];
+
+	n___rslidar_nodelet_manager -> t___rslidar_laserscan	[penwidth=1.25];
+	n___rslidar_nodelet_manager -> t___rslidar_points	[penwidth=1.25];
+	n___move_base_rr100 -> t___move_base__goal	[penwidth=1.25];
+	n___move_base_rr100 -> t___move_base_rr100__local_costmap__footprint	[penwidth=1.25];
+	n___move_base_rr100 -> t___move_base_rr100__global_costmap__footprint	[penwidth=1.25];
+	n___move_base_rr100 -> t___cmd_vel_raw	[penwidth=1.25];
+	n___slam_toolbox -> t___map	[penwidth=1.25];
+	n___slam_toolbox -> n_n__tf	[penwidth=1.25];
+	n___robot_state_publisher -> n_n__tf	[penwidth=1.25];
+	n___rr100_node -> t___rr100_steering_controller__odom	[penwidth=1.25];
+
+	n___rr100_node -> t___set_brakes	[penwidth=1.25];
+	n___rr100_node -> t___joint_states	[penwidth=1.25];
+	n___rr100_node -> n_n__tf	[penwidth=1.25];
+	n___velocity_smoother_nodelet_manager -> t___cmd_vel	[penwidth=1.25];
+	n___rr100_arduino_node -> t___rr100__docked	[penwidth=1.25];
+
+	n___drive_amp_node -> t___corrected_cmd_vel	[penwidth=1.25];
+
+	n___twist_mux -> t___rr100_steering_controller__cmd_vel	[penwidth=1.25];
+
+	n___um7_driver	[
+		label="/um7_driver"
+		shape=ellipse,
+		tooltip="/um7_driver"];
+	n___um7_driver -> t___imu__data	[penwidth=1.25];
+}

@@ -60,9 +60,6 @@
             <arg name="imu_topic" value="$(arg imu_topic)" />
             <arg name="odom_topic" value="/odometry/filtered" />
 
-            <arg name="gps_enabled" value="$(arg gps_enabled)" />
-            <arg name="gps_topic" value="$(arg gps_topic)" />
-
             <arg name="simulated" value="$(arg simulated)" />
             <arg name="use_rviz" value="false" />
             <arg name="map_path" value="$(arg posegraph_map_path)" />
@@ -80,9 +77,6 @@
             <arg name="pointcloud_topic" value="$(arg pointcloud_topic)" />
             <arg name="imu_topic" value="$(arg imu_topic)" />
             <arg name="odom_topic" value="/odometry/filtered" />
-
-            <arg name="gps_enabled" value="$(arg gps_enabled)" />
-            <arg name="gps_topic" value="$(arg gps_topic)" />
 
             <arg name="simulated" value="$(arg simulated)" />
             <arg name="use_rviz" value="false" />

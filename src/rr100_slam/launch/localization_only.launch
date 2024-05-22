@@ -7,10 +7,6 @@
     <arg name="odom_topic" default="rr100_steering_controller/odom"
         doc="The topic in which the robot's odometry data is published" />
 
-    <arg name="gps_enabled" default="false" />
-    <arg name="gps_topic" default="/ublox_node/fix"
-        doc="The topic in which the robot's odometry data is published" />
-
     <arg name="simulated" default="false" doc="Whether the robot is simulated" />
     <arg name="use_rviz" default="true" />
 

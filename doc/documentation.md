@@ -155,27 +155,33 @@ COPY --from=cacher $WORKSPACE/src/ .
 # Compile dependencies as separate layer for better cache
 RUN mv CMakeLists.txt src \
     && . /opt/ros/${ROS_DISTRO}/setup.sh \
+    # Copy the simulation packages to the source directory
     && cp -r dependencies/* src \
+    # Compile the packages that were in the separation directory
     && ls dependencies | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
+    # Delete the separation directory
     && rm -rf dependencies
 # ... same for other isolated packages
 ```
 
 Finally we have the two target stages, `simulation` and `real`. In `simulation`, we copy the simulation packages into our workspace and compile them separately whereas in `real`, we skip these packages as they are not needed and set our `ROS_MASTER_URI` to the RR100 robot and our `ROS_IP` to our IP address :
 ```Dockerfile
+# Simulation target
 FROM builder as simulation
+# Compile the simulation packages
 RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
     && cp -r simulation/* src \
     && ls simulation | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
     && rm -rf simulation
 
+# Real robot target
 FROM builder as real
-ARG IP
-ENV ROS_MASTER_URI=http://rr-100-07:11311
-ENV ROS_IP=${IP}
+ARG IP # Declare that the "IP" build argument will be used 
+ENV ROS_MASTER_URI=http://rr-100-07:11311 # Set the container's ROS master to the RR100
+ENV ROS_IP=${IP} # Set the container's ROS IP as the build argument passed
 ```
 > [!NOTE]
-> The `$IP` argument is passed as a build argument by the build_and_run.sh script; else you can define it at the top of the Dockerfile.
+> The `$IP` argument is passed as a build argument by the build_and_run.sh script; else you can define it at the top of the Dockerfile or pass it directly when running `docker build` with `--build-arg IP=<your IP address>`.
 
 ## Build and run script
 > [!NOTE]
@@ -191,7 +197,7 @@ For now, let's focus on how each of these packages are integrated in our autonom
   <p align="center"><i>RR100 navigation package diagram</i></p>
 </div>
 
-First, `rslidar_laserscan` (internally uses `pointcloud_to_laserscan`) takes in point clouds recorded by the RSLiDAR-16 of the robot and converts them to a planar 2D point cloud in the standard ROS format `sensor_msgs/LaserScan`. This converted point cloud is then piped to the SLAM package `slam_toolbox`, which reads the robot's transform tree (more specifically the transform from the base frame to the LiDAR frame and from the odometry frame to the base frame) and the 2D laserscan to compute an occupancy grid used as a map (how this is done will be detailed in a later section) which is then published.
+First, `rslidar_laserscan` (internally uses `pointcloud_to_laserscan`) takes in point clouds recorded by the RSLiDAR-16 on the robot and converts them to a planar 2D point cloud in the standard ROS format `sensor_msgs/LaserScan`. This converted point cloud is then piped to the SLAM package `slam_toolbox`, which reads the robot's transform tree (more specifically the transform from the base frame to the LiDAR frame and from the odometry frame to the base frame) and the 2D laserscan to compute an occupancy grid used as a map (how this is done will be detailed in a later section) which is then published.
 
 In parallel, `robot_localization` (a pose estimation package built with Kalman filters) takes in wheel encoder odometry data and IMU data published by the robot and fuses these sensor measurements to estimate to robot's pose in the odometry frame and publish this pose to the `tf` tree (which is used by `slam_toolbox`).
 
@@ -203,22 +209,91 @@ Subsequently `move_base`, which can be subdivided into 3 packages (2 path planni
 
 These velocity commands are then corrected by the `rr100_drive_amp` package which read our odometry estimations and target velocities (computed by `move_base`) and uses this data to compute corrections (using a PID) to apply to the computed velocities so that our odometry reaches these target velocities.
 
-Finally, `yocs_velocity_smoother` takes in our corrected velocities computed by `rr100_drive_amp` and *smoothes* them in respect to our robot's maximum velocities and accelerations (linear and angular).
+Finally, `yocs_velocity_smoother` takes in our corrected velocities computed by `rr100_drive_amp` and *smoothes* them with respect to our robot's maximum velocities and accelerations (linear and angular).
 
 ### Node and topic interaction
 > [!NOTE]
 > Under construction
-<div class="figure" >
-  <img src="resources/nav_node_graph_no_tf.png"/>
-  <p align="center"><i>Package node graph (without tf connections), ellipses represent nodes and rectangles represent topics</i></p>
+
+Below is a node graph representing the relevant nodes and topics to the robot's navigation stack. 
+<div class="figure">
+  <img src="resources/node_graph_real.svg"/>
+  <p align="center"><i>Package node graph, ellipses represent nodes and rectangles represent topics</i></p>
 </div>
+
 
 ## Per-package description
 > [!NOTE]
 > Under construction
 ### rslidar_laserscan
-### rr100_slam
+<div>
+<pre>
+rslidar_laserscan/
+├── cfg
+│   ├── RSLaserScan.cfg
+│   └── rslidar16_to_laserscan.yaml
+├── CHANGELOG.md
+├── CMakeLists.txt
+├── include
+├── launch
+│   ├── rslidar_laserscan.launch
+│   ├── rslidar_laserscan_nodelet.launch
+│   └── unofficial_rslidar_laserscan.launch
+├── nodelets.xml
+├── package.xml
+├── README.md
+└── src
+    ├── node.cpp
+    ├── nodelet.cpp
+    └── rslidar_laserscan.cpp
+</pre>
+<p align="center"><i>Package structure</i></p>
+</div>
+
+The `rslidar_laserscan` package, like mentionned in [Package interaction](#package-interaction), handles `sensor_msgs/PointCloud2` messages conversion to `sensor_msgs/LaserScan` messages. This package makes use of the standard ROS package `pointcloud_to_laserscan`.
+
+The `launch` directory contains every launch file used to configure and launch the nodes/nodelet. When running this package on a distant host, ie. *not* on the robot, it is recommended to use the `rslidar_laserscan_nodelet.launch` launch file. This launch file uses nodelets instead of nodes and registers the point cloud conversion nodelet on the robot's `rslidar_nodelet_manager`. This allows ROS to use *intra-process* communication as opposed to classic *inter-process* transfers that standalone nodes usually use, which results in much greater communication throughput.
+
+> [!NOTE]
+> As you may know, point cloud data structures that contain many points are usually quite large, and transferring these over the network at medium (~10Hz) frequencies would require a large portion of the available bandwidth, resulting in a global slow down of ROS.
+
+A custom node/nodelet was also implemented and can be used instead of the standard package but was found to be less effective at converting the point clouds than the standard one. However, this custom node is also dynamically reconfigurable and allows the user to choose a single ring from the LiDAR to use as a planar scan.
+
+#### Configuration
+To configure the package, a configuration file (`rslidar16_to_laserscan.yaml`) can be edited in the `cfg` folder. The parameters currently set should be tailored to the RSLiDAR-16 used on the RR100. However if you want to modify these parameters, an overview of the exposed parameters is available [here](http://wiki.ros.org/pointcloud_to_laserscan#Parameters).
+
 ### rr100_localization
+<!-- TODO -->
+> [!NOTE]
+> Under construction
+
+### rr100_slam
+The `rr100_slam` package is a wrapper package around `slam_toolbox` which contains launch files and parameter files used to set up the SLAM/localization nodes for our RR100. The parameter files inside the package use *mostly* default values with the exception of a few parameter, namely :
+
+| Parameter name        | default   | modified       |
+| --------------------- | --------- | -------------- |
+| `base_frame`          | base_link | base_footprint |
+| `ceres_loss_function` | None      | HuberLoss      |
+| `mode`*               | mapping   | localization   |
+
+\* Only in localization mode, used by `localization_only.launch`
+
+The package exposes 2 modes : SLAM mode and localization-only mode. These two modes are launched and set up by using `slam_2D.launch` (that loads the parameters in `mapper_params_online_async.yaml`) and `localization.launch` (that loads parameters in `mapper_params_localization.yaml`) respectively.
+
+> [!NOTE]
+> The author and main maintainer of `slam_toolbox` recommends not modifying the default values set in the parameter files as they've been optimized for most cases.
+
 ### rr100_drive_amp
+<!-- TODO -->
+> [!NOTE]
+> Under construction
+
 ### yocs_velocity_smoother
+<!-- TODO -->
+> [!NOTE]
+> Under construction
+
 ### rr100_navigation
+<!-- TODO -->
+> [!NOTE]
+> Under construction
