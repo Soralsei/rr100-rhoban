@@ -56,7 +56,7 @@ gazebo_ros_control:
     # front_left_wheel ...
 ```
 > [!WARNING]
-> You should nevertheless be advised that these changes are only temporary and will be void every time you rebuild the image or run a new container unless you copy the original package (`rr100_configuration`), modify these files directly then add then to this workspace.
+> You should nevertheless be advised that these changes are only temporary and will be void every time you rebuild the image or run a new container unless you copy the original package (`rr100_configuration`), modify these files directly then add them to this workspace.
 
 Next, open a new terminal inside the container :
 ```bash
