@@ -16,6 +16,10 @@
 
 ## Package and tools documentation
 - `docker` : https://docs.docker.com/
+- `ROS Noetic`
+  - https://wiki.ros.org/ROS/Tutorials
+  - http://wiki.ros.org/roscpp
+  - http://wiki.ros.org/rospy
 - `slam_toolbox` : https://github.com/SteveMacenski/slam_toolbox/blob/noetic-devel/README.md#Introduction
 - `pointcloud_to_laserscan` : http://wiki.ros.org/pointcloud_to_laserscan
 - `move_base` : http://wiki.ros.org/move_base
@@ -223,12 +227,11 @@ Below is a node graph representing the relevant nodes and topics to the robot's 
 
 
 ## Per-package description
-> [!NOTE]
-> Under construction
+
 ### rslidar_laserscan
 <div>
 <pre>
-rslidar_laserscan/
+src/rslidar_laserscan/
 ├── cfg
 │   ├── RSLaserScan.cfg
 │   └── rslidar16_to_laserscan.yaml
@@ -267,8 +270,27 @@ To configure the package, a configuration file (`rslidar16_to_laserscan.yaml`) c
 > [!NOTE]
 > Under construction
 
+Data fusion package 
+
 ### rr100_slam
-The `rr100_slam` package is a wrapper package around `slam_toolbox` which contains launch files and parameter files used to set up the SLAM/localization nodes for our RR100. The parameter files inside the package use *mostly* default values with the exception of a few parameter, namely :
+<div>
+<pre>
+src/rr100_slam/
+├── CMakeLists.txt
+├── config
+│   ├── mapper_params_localization.yaml
+│   └── mapper_params_online_async.yaml
+├── launch
+│   ├── localization_only.launch
+│   ├── online_async.launch
+│   └── slam_2d.launch
+├── package.xml
+└── rviz
+</pre>
+<p align="center"><i>Package structure</i></p>
+</div>
+
+The `rr100_slam` package is a wrapper package around `slam_toolbox` which contains launch files and parameter files used to set up the SLAM/localization nodes for our RR100. The parameter files (in `config/`) use *mostly* default values with the exception of a few parameter, namely :
 
 | Parameter name        | default   | modified       |
 | --------------------- | --------- | -------------- |
@@ -276,17 +298,52 @@ The `rr100_slam` package is a wrapper package around `slam_toolbox` which contai
 | `ceres_loss_function` | None      | HuberLoss      |
 | `mode`*               | mapping   | localization   |
 
-\* Only in localization mode, used by `localization_only.launch`
+*\* Only in `mapper_params_localization.yaml`, loaded in `localization_only.launch`*
 
 The package exposes 2 modes : SLAM mode and localization-only mode. These two modes are launched and set up by using `slam_2D.launch` (that loads the parameters in `mapper_params_online_async.yaml`) and `localization.launch` (that loads parameters in `mapper_params_localization.yaml`) respectively.
 
 > [!NOTE]
-> The author and main maintainer of `slam_toolbox` recommends not modifying the default values set in the parameter files as they've been optimized for most cases.
+> The author and main maintainer of `slam_toolbox` recommends keeping the default values set in the parameter files as they're good enough for most applications. The list of arguments is available [here](https://github.com/SteveMacenski/slam_toolbox/blob/noetic-devel/README.md#configuration) if you still widh to modify them.
+
+The `slam_2D.launch`launch file runs the online asynchronous SLAM node of the `slam_toolbox` package with the `online_async.launch` file. This node handles incoming laser scans asynchronously with a best-effort policy (meaning that if the node can't meet the frequency of incoming scans, it will drop some of them).
+
+The `localization_only.launch` runs the localization node of the package which won't create permanent new nodes in the pose graph (meaning that it won't permanently map new spaces if it encounters some) and allows the robot to be manually localized by using Rviz's Pose estimation tool or by publishing a pose on the `/initialpose` topic.
 
 ### rr100_drive_amp
-<!-- TODO -->
-> [!NOTE]
-> Under construction
+<!-- Package written because at low speed -> robot stalling
+Simple PID controller:
+  - Reads velocity commands from move_base
+  - Reads filtered odometry (fused wheel odom + imu)
+  - computes corrected velocity command and publishes
+Config in yaml to set PID gains or dynamic reconfigure -->
+<div>
+<pre>
+src/rr100_drive_amp/
+├── cfg
+│   └── DriveAmp.cfg
+├── CMakeLists.txt
+├── config
+│   └── drive_amp_params.yaml
+├── include
+│   └── rr100_drive_amp
+├── launch
+│   └── drive_amp.launch
+├── package.xml
+├── scripts
+│   ├── conversion.py
+│   ├── drive_amp.py
+└── src
+</pre>
+<p align="center"><i>Package structure</i></p>
+</div>
+
+`rr100_drive_amp` takes in velocity commands calculated by `move_base` and the filtered odometry (wheel odometry fused with IMU data) then computes corrected velocity commands using a simple PID controller.
+
+There are multiple ways to configure the package :
+1. Edit the PID gains in `config/drive_amp_params.yaml`
+2. Use `rqt_reconfigure` to dynamically change the PID gains
+
+This package was written because at low speeds (when the robot tries to execute very sharp turns for exemple) the robot would get stuck (probably due to friction).
 
 ### yocs_velocity_smoother
 <!-- TODO -->

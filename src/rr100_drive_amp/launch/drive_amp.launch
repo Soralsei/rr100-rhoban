@@ -7,7 +7,6 @@
 
     <node name="drive_amp_node" type="drive_amp.py" pkg="rr100_drive_amp" output="screen">
         <rosparam file="$(find rr100_drive_amp)/config/drive_amp_params.yaml" command="load"/>
-        <param name="frequency" value="$(arg frequency)" />
 
         <remap from="twist_in" to="$(arg twist_in)" />
         <remap from="odom_in" to="$(arg odom_in)" />

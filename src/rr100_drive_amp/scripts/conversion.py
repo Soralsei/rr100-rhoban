@@ -1,31 +1,17 @@
 import numpy as np
 from geometry_msgs.msg import *
 
+'''
+Credit to https://github.com/iamlucaswolf for these functions which I slightly simplified
+'''
+
+
 stamped_type_to_attr = {
-    AccelStamped: 'accel',
-    AccelWithCovarianceStamped: 'accel',
-    InertiaStamped: 'inertia',
-    PointStamped: 'point',
-    PolygonStamped: 'polygon',
-    PoseStamped: 'pose',
-    PoseWithCovariance: 'pose',
-    QuaternionStamped: 'quaternion',
-    TransformStamped: 'transform',
     TwistStamped: 'twist',
     TwistWithCovarianceStamped: 'twist',
     Vector3Stamped: 'vector',
     WrenchStamped: 'wrench',
 }
-
-# def _assert_has_shape(array, *shapes):
-#     """Raises a ValueError if `array` cannot be reshaped into any of
-#     `shapes`."""
-
-#     # Assumes that shapes are tuples and sequences of shapes are lists
-#     if array.shape not in shapes:
-#         raise ValueError(
-#             f'Expected array of shape(s): {shapes}, received {array.shape}.'
-#         )
 
 def cast_to_dtype(array, dtype):
     """Raises a TypeError if `array` cannot be casted to `dtype` without
@@ -38,11 +24,6 @@ def cast_to_dtype(array, dtype):
 
     return array.astype(dtype)
 
-# def to_message(message_type, *args, **kwargs):
-#     """Converts a NumPy representation into the specified ROS message type."""
-    
-#     return message_type(message_type, *args, **kwargs)
-
 def unstamp(message):
     attribute = stamped_type_to_attr.get(message.__class__)    
     if attribute is not None:
@@ -52,16 +33,11 @@ def unstamp(message):
 
 def kinematics_to_numpy(message):
     message = unstamp(message)
-    is_wrench = isinstance(message, Wrench)
-    
-    linear = message.force if is_wrench else message.linear
-    angular = message.torque if is_wrench else message.angular
-    
-    return vector_to_numpy(linear), vector_to_numpy(angular)
+    return vector_to_numpy(message.linear), vector_to_numpy(message.angular)
 
 def kinematics_with_covariance_to_numpy(message):
     message = unstamp(message)
-    is_accel = isinstance(message, AccelWithCovarianceStamped)
+    is_accel = isinstance(message, AccelWithCovariance)
     
     kinematics = message.accel if is_accel else message.twist
     
@@ -88,23 +64,8 @@ def vector_to_numpy(vec):
     return np.array(data, dtype=d_type)
 
 def numpy_to_kinematics(message_type, linear, angular):
-    is_wrench = message_type is Wrench
-
-    linear_key = 'force' if is_wrench else 'linear'
-    angular_key = 'torque' if is_wrench else 'angular'
-
-    kwargs = {
-        linear_key: numpy_to_vector(Vector3, linear),
-        angular_key: numpy_to_vector(Vector3, angular)
-    }
-
-    return message_type(**kwargs)
-
-def numpy_to_kinematics_with_covariance(message_type, linear, angular, covariance):
-    is_wrench = message_type is Wrench
-
-    linear_key = 'force' if is_wrench else 'linear'
-    angular_key = 'torque' if is_wrench else 'angular'
+    linear_key = 'linear'
+    angular_key = 'angular'
 
     kwargs = {
         linear_key: numpy_to_vector(Vector3, linear),

@@ -35,7 +35,6 @@ class DriveAmp():
         self.reconf_server = server.Server(DriveAmpConfig, self.reconfigure)
         
         gains = rospy.get_param('gains', {'p' : 1.0, 'i' : 0.0, 'd' : 0.0})
-        frequency = rospy.get_param('frequency', 30.0)
         
         self.target = np.zeros((2, 3), dtype=np.float32)
         self.current = np.zeros((2, 3), dtype=np.float32)
@@ -74,7 +73,9 @@ class DriveAmp():
             with self.integrator_lock:
                 self.cumulated_error.fill(0)
     
-    def _odom_callback(self, odometry: Odometry) -> None:             
+    def _odom_callback(self, odometry: Odometry) -> None:
+        if not self.active:
+            return
         current_time = rospy.get_rostime()
         
         target = None
