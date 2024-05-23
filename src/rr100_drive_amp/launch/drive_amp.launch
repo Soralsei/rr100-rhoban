@@ -1,7 +1,6 @@
 <launch>
     <arg name="odom_in" default="/odom" />
     <arg name="twist_in" default="/cmd_vel" />
-    <arg name="frequency" default="30.0" />
 
     <arg name="twist_out" default="corrected_cmd_vel" />
 

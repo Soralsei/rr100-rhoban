@@ -57,8 +57,6 @@
             <arg name="nodelet_manager" value="$(arg nodelet_manager)" />
             <arg name="laserscan_topic" value="$(arg laserscan_topic)" />
             <arg name="pointcloud_topic" value="$(arg pointcloud_topic)" />
-            <arg name="imu_topic" value="$(arg imu_topic)" />
-            <arg name="odom_topic" value="/odometry/filtered" />
 
             <arg name="simulated" value="$(arg simulated)" />
             <arg name="use_rviz" value="false" />
@@ -75,8 +73,6 @@
             <arg name="map_resolution" value="$(arg map_resolution)" />
             <arg name="laserscan_topic" value="$(arg laserscan_topic)" />
             <arg name="pointcloud_topic" value="$(arg pointcloud_topic)" />
-            <arg name="imu_topic" value="$(arg imu_topic)" />
-            <arg name="odom_topic" value="/odometry/filtered" />
 
             <arg name="simulated" value="$(arg simulated)" />
             <arg name="use_rviz" value="false" />
@@ -89,7 +85,7 @@
         <arg name="cmd_vel_topic" value="$(arg cmd_vel_topic)" />
         <arg name="scan_topic" value="$(arg laserscan_topic)" />
         <arg name="odom_topic" value="$(arg odom_topic)" />
-
+s
         <arg name="cam_point_cloud_enabled" value="$(arg cam_point_cloud_enabled)" />
         <arg name="cam_point_cloud_topic" value="$(arg cam_point_cloud_topic)" />
 
