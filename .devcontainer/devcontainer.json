@@ -17,7 +17,18 @@
 	// Uncomment the next line to run commands after the container is created.
 	// "postCreateCommand": "cat /etc/os-release",
 	// Configure tool-specific properties.
-	// "customizations": {},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"ms-iot.vscode-ros",
+				"ms-vscode.cpptools",
+				"ms-vscode.cmake-tools",
+				"redhat.vscode-xml",
+				"redhat.vscode-yaml"
+			]
+		}
+	},
 	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "devcontainer"
 	"workspaceMount": "source=${localWorkspaceFolder},target=/opt/ros/rr100_ws,type=bind,consistency=cached",
