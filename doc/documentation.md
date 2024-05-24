@@ -309,7 +309,7 @@ The `slam_2D.launch`launch file runs the online asynchronous SLAM node of the `s
 
 The `localization_only.launch` runs the localization node of the package which won't create permanent new nodes in the pose graph (meaning that it won't permanently map new spaces if it encounters some) and allows the robot to be manually localized by using Rviz's Pose estimation tool or by publishing a pose on the `/initialpose` topic.
 
-In launch files, one can pass the point cloud and laser scan topic as launch arguments, which will be used to launch the point cloud conversion node (in `rslidar_laserscan`) and to set which topic `slam_toolbox` should subscribe to to receive the converted laser scans.
+In both of these launch files, one can pass the point cloud and laser scan topic as launch arguments, which will be used to launch the point cloud conversion node (in `rslidar_laserscan`) that's also started by the launch files, and to tell `slam_toolbox` what topic to subscribe to to receive the converted laser scans.
 
 ### rr100_drive_amp
 <!-- Package written because at low speed -> robot stalling
@@ -318,6 +318,9 @@ Simple PID controller:
   - Reads filtered odometry (fused wheel odom + imu)
   - computes corrected velocity command and publishes
 Config in yaml to set PID gains or dynamic reconfigure -->
+
+This package was written because at low speeds (when the robot tries to execute very sharp turns for exemple) the robot would get stuck (probably due to friction).
+
 <div>
 <pre>
 src/rr100_drive_amp/
@@ -344,9 +347,9 @@ There are multiple ways to configure the package :
 1. Edit the PID gains in `config/drive_amp_params.yaml`
 2. Use `rqt_reconfigure` to dynamically change the PID gains
 
-The current PID gain values work decently with our RR100 but could probably be further tuned for better results. For this, one could use `rqt_plot` to visualize velocity commands, corrected velocities and odometry while editing PID gains with `rqt_reconfigure`.
+The correction node can also dynamically be activated and deactivated using `rqt_reconfigure`. When deactivated, the node simply forwards the latest velocity command it received and skips the PID control loop.
 
-This package was written because at low speeds (when the robot tries to execute very sharp turns for exemple) the robot would get stuck (probably due to friction).
+The current PID gain values work decently with our RR100 but could probably be further tuned for better results. For this, one could use `rqt_plot` to visualize velocity commands, corrected velocities and odometry while editing PID gains with `rqt_reconfigure`.
 
 ### yocs_velocity_smoother
 <!-- TODO -->

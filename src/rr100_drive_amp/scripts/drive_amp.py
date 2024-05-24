@@ -74,14 +74,18 @@ class DriveAmp():
                 self.cumulated_error.fill(0)
     
     def _odom_callback(self, odometry: Odometry) -> None:
-        if not self.active:
-            return
         current_time = rospy.get_rostime()
         
         target = None
         with self.receive_lock:
             target = self.target.copy()
             
+        if not self.active:
+            # If the node is not active, just forward 
+            # the twist_in command velocities
+            self.pub.publish(target)
+            return
+        
         if np.allclose(target, 0, atol=1e-5): 
             self.target = np.zeros((2, 3), dtype=np.float32)
             message = Twist()
