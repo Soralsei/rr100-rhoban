@@ -36,6 +36,44 @@ confirm() {
     fi
 }
 
+compare_builds() {
+    changed=false
+
+    mkdir -p .temp/
+    # We should probably check that the image is built with the same Dockerfile
+    # but for now, just assume the user won't give the name of a completely unrelated image
+    (docker create --name files "$tag" && docker cp files:/opt/ros/rr100_ws/ .temp/ && docker container rm files) > /dev/null
+    cd .temp/rr100_ws
+
+    if [ ! -f "TARGET_${target^^}" ]; then
+        echo "Target changed between builds"
+        changed=true
+    else
+        # Compute the SHA256 checksum of the files copied to the Docker image as well as the Dockerfile
+        ## Uses perl to find raw COPY instructions (ie. copying build context files/dirs into the image) in the Dockerfile
+        ## And get their names.
+        ## Then, find all files in the extracted file/directory names and pipe their contents into sha256sum to get the sum
+        checksum_host=$((echo Dockerfile ; cat Dockerfile | perl -lne 'print $1 if m/^COPY (?!--)([^ ]+) .*/') | xargs -I@ sh -c "find @ -type f" | sort | xargs cat | sha256sum | cut -d' ' -f1)
+        echo "Build context hash : $checksum_host"
+
+        # Same as above
+        checksum_container=$((echo Dockerfile ; cat Dockerfile | perl -lne 'print $1 if m/^COPY (?!--)([^ ]+) .*/') | xargs -I@ sh -c "find @ -type f" | sort | xargs cat | sha256sum | cut -d' ' -f1)
+        echo "Container hash : $checksum_container"
+        
+        [ "$checksum_host" != "$checksum_container" ] && changed=true || changed=false
+    fi
+
+    cd ../..
+    rm -rf .temp/
+
+    if [ "$changed" = true ]; then
+        confirm "Build context changed since last build of image, do you want to rebuild it"
+        if [ "$confirmed" = true ]; then
+            rebuild=true
+        fi
+    fi
+}
+
 if [[ $# = 0 ]]; then
     usage
 fi
@@ -91,45 +129,20 @@ if [ -z "$tag" ]; then
 fi
 
 echo -e "Rebuild : $rebuild\n"
-
-# Check if the docker image with tag name $tag exists
-if docker image inspect $tag >/dev/null 2>&1; then
-    echo "Image '$tag' exists locally"
-
-    # Compute the SHA256 checksum of the files copied to the Docker image as well as the Dockerfile
-    ## Uses perl to find raw COPY instructions (ie. copying build context files/dirs into the image) in the Dockerfile
-    ## And get their names.
-    ## Then, find all files in the extracted file/directory names and pipe their contents into sha256sum to get the sum
-    checksum_host=$(echo Dockerfile ; cat Dockerfile | perl -lne 'print $1 if m/^COPY (?!--)([^ ]+) .*/') | xargs -I@ sh -c "find @ -type f" | sort | xargs cat | sha256sum | cut -d' ' -f1
-    echo "$checksum_host"
-
-    # TODO : test this snippet
-    mkdir temp/
-    # We should probably check that the image is built with the same Dockerfile
-    # but for now, just assume the user won't give the name of a completely unrelated image
-    docker create --name files "$tag" && docker cp files:/opt/ros/rr100_ws/ ./temp/
-    cd temp/rr100_ws
-
-    # Same as above
-    checksum_container=$(echo Dockerfile ; cat Dockerfile | perl -lne 'print $1 if m/^COPY (?!--)([^ ]+) .*/') | xargs -I@ sh -c "find @ -type f" | sort | xargs cat | sha256sum | cut -d' ' -f1
-    rm -rf temp/
-
-    if [ "$checksum_host" -ne "$checksum_container" ]; then
-        confirm "Build context changed since last build of image, do you want ot rebuild it"
+if [ "$rebuild" = false ]; then
+    # Check if the docker image with tag name $tag exists
+    if docker image inspect $tag >/dev/null 2>&1; then
+        echo "Image '$tag' exists locally"
+        compare_builds
+    else
+        # else if it doesn't, ask the user if they want to build it or not
+        confirm "Image '$tag' does not exist locally, do you want to build it"
         if [ "$confirmed" = false ]; then
             echo "Aborting..."
             exit 1
         fi
         rebuild=true
     fi
-else
-    # else if it doesn't, ask the user if they want to build it or not
-    confirm "Image '$tag' does not exist locally, do you want to build it"
-    if [ "$confirmed" = false ]; then
-        echo "Aborting..."
-        exit 1
-    fi
-    rebuild=true
 fi
 
 if [ "$rebuild" = true ]; then
