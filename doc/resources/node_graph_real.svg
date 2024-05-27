@@ -5,9 +5,9 @@
 <!-- Title: graphname Pages: 1 -->
 
 <svg
-   width="1302.9943pt"
-   height="1380.472pt"
-   viewBox="0 0 1303.3038 1380.2721"
+   width="1303.3037pt"
+   height="1304.9658pt"
+   viewBox="0 0 1303.3037 1304.9658"
    version="1.1"
    id="svg96"
    sodipodi:docname="node_graph_real.svg"
@@ -26,30 +26,30 @@
      borderopacity="0.25"
      inkscape:showpageshadow="2"
      inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
+     inkscape:pagecheckerboard="true"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="pt"
-     inkscape:zoom="0.67203307"
-     inkscape:cx="949.35805"
-     inkscape:cy="899.50931"
-     inkscape:window-width="1920"
-     inkscape:window-height="1121"
+     inkscape:zoom="0.46368807"
+     inkscape:cx="801.18516"
+     inkscape:cy="872.3537"
+     inkscape:window-width="2560"
+     inkscape:window-height="1499"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="graph0" />
+     inkscape:current-layer="svg96" />
   <g
      id="graph0"
      class="graph"
-     transform="translate(24.003626,1373.8516)">
+     transform="translate(24.003626,1374.1157)">
     <title
        id="title1">graphname</title>
     <polygon
        fill="#ffffff"
        stroke="transparent"
-       points="-4,-1376.8 1259.2964,-1376.8 1259.2964,4 -4,4 "
+       points="-4,4 -4,-1376.8 1259.2964,-1376.8 1259.2964,4 "
        id="polygon1"
-       transform="matrix(1.031669,0,0,1,-19.87695,2.6843445)" />
+       transform="matrix(1.031669,0,0,0.94507952,-19.87695,-72.930168)" />
     <g
        id="clust1"
        class="cluster"
@@ -60,7 +60,7 @@
          fill="none"
          stroke="#000000"
          stroke-width="2"
-         points="641,-1364.8 641,-964 103,-964 103,-1364.8 "
+         points="103,-964 103,-1364.8 641,-1364.8 641,-964 "
          id="polygon2"
          transform="matrix(1.0001748,0,0,0.90800702,-0.06502767,-88.634214)" />
       <text
@@ -82,7 +82,7 @@
          fill="none"
          stroke="#000000"
          stroke-width="2"
-         points="471,-392.8 597,-392.8 597,-316 471,-316 "
+         points="597,-316 471,-316 471,-392.8 597,-392.8 "
          id="polygon3" />
       <text
          text-anchor="middle"
@@ -96,7 +96,7 @@
     <g
        id="clust3"
        class="cluster"
-       transform="translate(0,-16.503918)">
+       transform="translate(9.7944956,-259.81165)">
       <title
          id="title4">cluster___rr100_steering_controller</title>
       <polygon
@@ -124,7 +124,7 @@
          fill="none"
          stroke="#000000"
          stroke-width="2"
-         points="649,-1040.8 1086,-1040.8 1086,-964 649,-964 "
+         points="1086,-964 649,-964 649,-1040.8 1086,-1040.8 "
          id="polygon5" />
       <text
          text-anchor="middle"
@@ -145,7 +145,7 @@
          fill="none"
          stroke="#000000"
          stroke-width="2"
-         points="502,-284.8 1094,-284.8 1094,-92 502,-92 "
+         points="1094,-92 502,-92 502,-284.8 1094,-284.8 "
          id="polygon6" />
       <text
          text-anchor="middle"
@@ -166,7 +166,7 @@
          fill="none"
          stroke="#000000"
          stroke-width="2"
-         points="510,-176.8 784,-176.8 784,-100 510,-100 "
+         points="784,-100 510,-100 510,-176.8 784,-176.8 "
          id="polygon7" />
       <text
          text-anchor="middle"
@@ -187,7 +187,7 @@
          fill="none"
          stroke="#000000"
          stroke-width="2"
-         points="804,-176.8 1086,-176.8 1086,-100 804,-100 "
+         points="1086,-100 804,-100 804,-176.8 1086,-176.8 "
          id="polygon8" />
       <text
          text-anchor="middle"
@@ -208,7 +208,7 @@
          fill="none"
          stroke="#000000"
          stroke-width="2"
-         points="692,-608.8 776,-608.8 776,-532 692,-532 "
+         points="776,-532 692,-532 692,-608.8 776,-608.8 "
          id="polygon9" />
       <text
          text-anchor="middle"
@@ -234,7 +234,7 @@
           <polygon
              fill="none"
              stroke="#000000"
-             points="139.4074,-1008 139.4074,-972 270.5926,-972 270.5926,-1008 "
+             points="270.5926,-972 270.5926,-1008 139.4074,-1008 139.4074,-972 "
              id="polygon10" />
           <text
              text-anchor="middle"
@@ -251,7 +251,7 @@
     <g
        id="node17"
        class="node"
-       transform="translate(0,-16.503918)">
+       transform="translate(0,-142.53393)">
       <title
          id="title11">n___twist_mux</title>
       <g
@@ -289,14 +289,16 @@
          fill="none"
          stroke="#000000"
          stroke-width="1.25"
-         d="M 167.3998,-971.9519 C 108.2181,-940.6138 0,-870.1625 0,-774 c 0,0 0,0 0,540 0,96.2088 108.4515,165.2912 170.2175,196.8339"
-         id="path12" />
+         d="M 167.3998,-971.9519 C 108.2181,-940.6138 0,-870.1625 0,-774 v 412.46971 c 0,95.50173 108.4515,165.2912 170.2175,196.8339"
+         id="path12"
+         sodipodi:nodetypes="cssc" />
       <polygon
          fill="#000000"
          stroke="#000000"
          stroke-width="1.25"
-         points="179.3396,-32.6066 168.8299,-33.9469 171.9595,-40.2083 "
-         id="polygon12" />
+         points="171.9595,-40.2083 179.3396,-32.6066 168.8299,-33.9469 "
+         id="polygon12"
+         transform="translate(0,-127.53033)" />
     </g>
     <!-- t___joy_teleop__joy -->
     <g
@@ -313,7 +315,7 @@
           <polygon
              fill="none"
              stroke="#000000"
-             points="422.2731,-1188 422.2731,-1224 321.7269,-1224 321.7269,-1188 "
+             points="321.7269,-1224 321.7269,-1188 422.2731,-1188 422.2731,-1224 "
              id="polygon13" />
           <text
              text-anchor="middle"
@@ -449,7 +451,7 @@
           <polygon
              fill="none"
              stroke="#000000"
-             points="832.7423,-1008 832.7423,-972 947.2577,-972 947.2577,-1008 "
+             points="947.2577,-972 947.2577,-1008 832.7423,-1008 832.7423,-972 "
              id="polygon18" />
           <text
              text-anchor="middle"
@@ -499,7 +501,7 @@
           <polygon
              fill="none"
              stroke="#000000"
-             points="657.3697,-1008 657.3697,-972 796.6303,-972 796.6303,-1008 "
+             points="796.6303,-972 796.6303,-1008 657.3697,-1008 657.3697,-972 "
              id="polygon20" />
           <text
              text-anchor="middle"
@@ -621,7 +623,7 @@
           <polygon
              fill="none"
              stroke="#000000"
-             points="478.6345,-360 478.6345,-324 589.3655,-324 589.3655,-360 "
+             points="589.3655,-324 589.3655,-360 478.6345,-360 478.6345,-324 "
              id="polygon25" />
           <text
              text-anchor="middle"
@@ -669,7 +671,7 @@
     <g
        id="edge8"
        class="edge"
-       transform="translate(0,-16.503918)">
+       transform="translate(-15.003562,-16.503918)">
       <title
          id="title27">t___move_base__goal-&gt;n___move_base_rr100</title>
       <path
@@ -682,14 +684,14 @@
          fill="#000000"
          stroke="#000000"
          stroke-width="1.25"
-         points="640.9166,-252.1357 631.6199,-257.2172 636.8179,-261.9057 "
+         points="631.6199,-257.2172 636.8179,-261.9057 640.9166,-252.1357 "
          id="polygon27" />
     </g>
     <!-- t___rr100_steering_controller__odom -->
     <g
        id="node7"
        class="node"
-       transform="translate(0,-16.503918)">
+       transform="translate(9.7944956,-259.81165)">
       <title
          id="title28">t___rr100_steering_controller__odom</title>
       <g
@@ -724,14 +726,16 @@
          fill="none"
          stroke="#000000"
          stroke-width="1.25"
-         d="m 211.0322,-539.9123 c 27.564,17.1459 69.0001,44.3187 101.9678,71.9123 72.543,60.7177 71.1016,98.3253 149,152 40.5466,27.9381 92.1433,49.6195 131.022,63.6518"
-         id="path29" />
+         d="m 708.43299,-433.35418 c -27.56036,41.93972 -29.28492,126.53865 -46.70918,177.15003"
+         id="path29"
+         sodipodi:nodetypes="cc" />
       <polygon
          fill="#000000"
          stroke="#000000"
          stroke-width="1.25"
          points="602.618,-248.9462 592.0232,-248.9889 594.3622,-255.5865 "
-         id="polygon29" />
+         id="polygon29"
+         transform="rotate(90,633.93808,-222.41738)" />
     </g>
     <!-- n___ekf_se_odom -->
     <g
@@ -775,8 +779,9 @@
          fill="none"
          stroke="#000000"
          stroke-width="1.25"
-         d="m 260.5464,-539.989 c 12.5201,2.7384 25.329,5.4836 37.4536,7.989 128.8012,26.6148 280.0021,54.8071 364.1227,70.2217"
-         id="path31" />
+         d="m 272.73838,-783.08102 c -0.38759,79.17885 202.06086,284.61235 388.88115,318.84606"
+         id="path31"
+         sodipodi:nodetypes="cc" />
       <polygon
          fill="#000000"
          stroke="#000000"
@@ -788,7 +793,7 @@
     <g
        id="node19"
        class="node"
-       transform="translate(0,-16.503918)">
+       transform="translate(0,-142.53393)">
       <title
          id="title32">n___velocity_smoother_nodelet_manager</title>
       <g
@@ -826,9 +831,9 @@
          fill="none"
          stroke="#000000"
          stroke-width="1.25"
-         d="M 163.4493,-539.8102 C 148.3533,-522.8022 127.68,-495.9005 119,-468 c -13.48307,76.29007 0.62707,156.84088 60.1448,209.3741"
+         d="M 143.92696,-783.36302 C 24.711096,-748.04131 22.071388,-628.43177 23.090857,-513.32588 24.110326,-398.22 10.297919,-274.7422 179.1448,-258.6259"
          id="path33"
-         sodipodi:nodetypes="csc" />
+         sodipodi:nodetypes="czc" />
       <polygon
          fill="#000000"
          stroke="#000000"
@@ -840,7 +845,7 @@
     <g
        id="node20"
        class="node"
-       transform="translate(0,-16.503918)">
+       transform="translate(0,-142.53393)">
       <title
          id="title34">n___drive_amp_node</title>
       <g
@@ -871,27 +876,30 @@
     <g
        id="edge12"
        class="edge"
-       transform="translate(0,-16.503918)">
+       transform="translate(0,-16.503918)"
+       inkscape:label="edge12">
       <title
          id="title35">t___rr100_steering_controller__odom-&gt;n___drive_amp_node</title>
       <path
          fill="none"
          stroke="#000000"
          stroke-width="1.25"
-         d="m 186.9373,-539.6793 c 5.5139,17.0144 13.7999,42.5826 20.1153,62.0702"
-         id="path35" />
+         d="M 661.08308,-450.18359 C 445.13553,-484.79827 287.63469,-665.5173 224.20013,-604.1629"
+         id="path35"
+         sodipodi:nodetypes="cc" />
       <polygon
          fill="#000000"
          stroke="#000000"
          stroke-width="1.25"
-         points="210.1504,-468.0502 203.7379,-476.4841 210.397,-478.6421 "
-         id="polygon35" />
+         points="210.397,-478.6421 210.1504,-468.0502 203.7379,-476.4841 "
+         id="polygon35"
+         transform="rotate(52.256126,344.24411,-522.58508)" />
     </g>
     <!-- t___rr100_steering_controller__cmd_vel -->
     <g
        id="node8"
        class="node"
-       transform="translate(0,-16.503918)">
+       transform="translate(9.7944956,-259.81165)">
       <title
          id="title36">t___rr100_steering_controller__cmd_vel</title>
       <g
@@ -957,8 +965,9 @@
          fill="none"
          stroke="#000000"
          stroke-width="1.25"
-         d="M 426.1842,-576.2773 C 430.0474,-602.3105 440.0685,-650.6082 464,-684 c 60.7624,-84.7824 168.9438,-148.1755 227.9079,-178.3795"
-         id="path38" />
+         d="m 541.7133,-796.05072 c 67.25187,-0.80378 124.41383,-56.17441 150.1946,-66.32878"
+         id="path38"
+         sodipodi:nodetypes="cc" />
       <polygon
          fill="#000000"
          stroke="#000000"
@@ -1072,7 +1081,7 @@
           <polygon
              fill="none"
              stroke="#000000"
-             points="983.9672,-1008 983.9672,-972 1078.0328,-972 1078.0328,-1008 "
+             points="1078.0328,-972 1078.0328,-1008 983.9672,-1008 983.9672,-972 "
              id="polygon43" />
           <text
              text-anchor="middle"
@@ -1089,7 +1098,7 @@
     <g
        id="edge36"
        class="edge"
-       transform="translate(0,-16.503918)">
+       transform="translate(-15.003562,-16.503918)">
       <title
          id="title44">n___move_base_rr100-&gt;t___move_base__goal</title>
       <path
@@ -1102,7 +1111,7 @@
          fill="#000000"
          stroke="#000000"
          stroke-width="1.25"
-         points="543.2438,-323.6793 552.5468,-318.6091 547.3545,-313.9144 "
+         points="552.5468,-318.6091 547.3545,-313.9144 543.2438,-323.6793 "
          id="polygon44" />
     </g>
     <!-- t___move_base_rr100__local_costmap__footprint -->
@@ -1120,7 +1129,7 @@
           <polygon
              fill="none"
              stroke="#000000"
-             points="518.1695,-144 518.1695,-108 775.8305,-108 775.8305,-144 "
+             points="775.8305,-108 775.8305,-144 518.1695,-144 518.1695,-108 "
              id="polygon45" />
           <text
              text-anchor="middle"
@@ -1168,7 +1177,7 @@
           <polygon
              fill="none"
              stroke="#000000"
-             points="812.3839,-144 812.3839,-108 1077.6161,-108 1077.6161,-144 "
+             points="1077.6161,-108 1077.6161,-144 812.3839,-144 812.3839,-108 "
              id="polygon47" />
           <text
              text-anchor="middle"
@@ -1216,7 +1225,7 @@
           <polygon
              fill="none"
              stroke="#000000"
-             points="567.9172,-576 567.9172,-540 664.0828,-540 664.0828,-576 "
+             points="664.0828,-540 664.0828,-576 567.9172,-576 567.9172,-540 "
              id="polygon49" />
           <text
              text-anchor="middle"
@@ -1240,7 +1249,7 @@
          fill="none"
          stroke="#000000"
          stroke-width="1.25"
-         d="m 652.05809,-251.92353 c 0,-76.86285 8.95306,-187.75602 -72.57538,-187.75602"
+         d="m 644.3447,-251.94679 c 0,-76.86285 -22.05389,-188.62849 -64.86199,-187.73276"
          id="path50"
          sodipodi:nodetypes="cc" />
       <polygon
@@ -1306,7 +1315,7 @@
           <polygon
              fill="none"
              stroke="#000000"
-             points="699.6177,-576 699.6177,-540 768.3823,-540 768.3823,-576 "
+             points="768.3823,-540 768.3823,-576 699.6177,-576 699.6177,-540 "
              id="polygon53" />
           <text
              text-anchor="middle"
@@ -1350,14 +1359,16 @@
          fill="none"
          stroke="#000000"
          stroke-width="1.25"
-         d="M 244.6604,-32.6066 C 304.1281,-61.6876 424,-132.8523 424,-234 c 0,-108 0,-108 0,-108 0,-67.2986 0,-146.3917 0,-187.6696"
-         id="path55" />
+         d="M 266.86561,-143.7134 C 326.33331,-172.7944 424,-242.37831 424,-343.52601 v -430.70167"
+         id="path55"
+         sodipodi:nodetypes="csc" />
       <polygon
          fill="#000000"
          stroke="#000000"
          stroke-width="1.25"
-         points="424,-539.7943 427.5001,-529.7944 420.5001,-529.7943 "
-         id="polygon55" />
+         points="427.5001,-529.7944 420.5001,-529.7943 424,-539.7943 "
+         id="polygon55"
+         transform="translate(0,-241.55769)" />
     </g>
     <!-- n_n__tf -->
     <g
@@ -1426,7 +1437,7 @@
     <g
        id="node24"
        class="node"
-       transform="translate(0,-16.503918)">
+       transform="translate(0,-142.53393)">
       <title
          id="title59">t___cmd_vel</title>
       <g
@@ -1454,7 +1465,7 @@
     <g
        id="edge47"
        class="edge"
-       transform="translate(0,-16.503918)">
+       transform="translate(0,-142.53393)">
       <title
          id="title60">n___velocity_smoother_nodelet_manager-&gt;t___cmd_vel</title>
       <path
@@ -1467,14 +1478,14 @@
          fill="#000000"
          stroke="#000000"
          stroke-width="1.25"
-         points="212,-144.0502 208.5001,-154.0502 215.5001,-154.0501 "
+         points="215.5001,-154.0501 212,-144.0502 208.5001,-154.0502 "
          id="polygon60" />
     </g>
     <!-- t___corrected_cmd_vel -->
     <g
        id="node32"
        class="node"
-       transform="translate(0,-16.503918)">
+       transform="translate(0,-142.53393)">
       <title
          id="title61">t___corrected_cmd_vel</title>
       <g
@@ -1502,7 +1513,7 @@
     <g
        id="edge49"
        class="edge"
-       transform="translate(0,-16.503918)">
+       transform="translate(0,-142.53393)">
       <title
          id="title62">n___drive_amp_node-&gt;t___corrected_cmd_vel</title>
       <path
@@ -1515,7 +1526,7 @@
          fill="#000000"
          stroke="#000000"
          stroke-width="1.25"
-         points="214.3343,-360.0502 211.0201,-370.1133 218.0189,-369.9836 "
+         points="218.0189,-369.9836 214.3343,-360.0502 211.0201,-370.1133 "
          id="polygon62" />
     </g>
     <!-- n___rr100_node&#45;&gt;t___rr100_steering_controller__odom -->
@@ -1529,7 +1540,7 @@
          fill="none"
          stroke="#000000"
          stroke-width="1.25"
-         d="m 678.64039,-875.19431 c -213.86078,0 -495.91026,163.49962 -529.30192,288.119"
+         d="m 678.64039,-875.19431 c -73.16003,34.75052 -469.21115,-135.02589 -529.49371,45.63611"
          id="path63"
          sodipodi:nodetypes="cc" />
       <polygon
@@ -1538,7 +1549,7 @@
          stroke-width="1.25"
          points="210.1089,-584.8994 214.3555,-579.3346 204.2826,-576.0503 "
          id="polygon63"
-         transform="rotate(-40.666764,174.38154,-499.85136)" />
+         transform="rotate(-40.666764,-155.59076,-622.1307)" />
     </g>
     <!-- n___rr100_node&#45;&gt;n_n__tf -->
     <g
@@ -1575,7 +1586,7 @@
           <polygon
              fill="none"
              stroke="#000000"
-             points="939.5252,-792 939.5252,-756 1018.4748,-756 1018.4748,-792 "
+             points="1018.4748,-756 1018.4748,-792 939.5252,-792 939.5252,-756 "
              id="polygon65" />
           <text
              text-anchor="middle"
@@ -1623,7 +1634,7 @@
           <polygon
              fill="none"
              stroke="#000000"
-             points="691.3373,-792 691.3373,-756 774.6627,-756 774.6627,-792 "
+             points="774.6627,-756 774.6627,-792 691.3373,-792 691.3373,-756 "
              id="polygon67" />
           <text
              text-anchor="middle"
@@ -1702,7 +1713,7 @@
           <polygon
              fill="none"
              stroke="#000000"
-             points="1014.049,-360 1014.049,-324 1127.951,-324 1127.951,-360 "
+             points="1127.951,-324 1127.951,-360 1014.049,-360 1014.049,-324 "
              id="polygon70" />
           <text
              text-anchor="middle"
@@ -1750,7 +1761,7 @@
           <polygon
              fill="none"
              stroke="#000000"
-             points="807.6219,-360 807.6219,-324 904.3781,-324 904.3781,-360 "
+             points="904.3781,-324 904.3781,-360 807.6219,-360 807.6219,-324 "
              id="polygon72" />
           <text
              text-anchor="middle"
@@ -1794,9 +1805,9 @@
          fill="none"
          stroke="#000000"
          stroke-width="1.25"
-         d="m 895.46191,-539.78407 c 0,0 -68.74601,42.22006 -89.04707,100.52653 -20.30106,58.30647 -121.743,60.81502 -118.58878,180.53287"
+         d="m 895.46191,-539.78407 c 0,0 -59.19376,57.78767 -84.56843,90.29402 -46.56352,59.65043 -99.10825,98.01764 -123.06742,190.76538"
          id="path74"
-         sodipodi:nodetypes="czc"
+         sodipodi:nodetypes="cac"
          style="display:inline" />
       <polygon
          fill="#000000"
@@ -1902,7 +1913,7 @@
     <g
        id="edge20"
        class="edge"
-       transform="translate(0,-16.503918)">
+       transform="translate(0,-142.53393)">
       <title
          id="title79">t___cmd_vel-&gt;n___twist_mux</title>
       <path
@@ -1915,7 +1926,7 @@
          fill="#000000"
          stroke="#000000"
          stroke-width="1.25"
-         points="212,-36.0502 208.5001,-46.0502 215.5001,-46.0501 "
+         points="215.5001,-46.0501 212,-36.0502 208.5001,-46.0502 "
          id="polygon79" />
     </g>
     <!-- n___rr100_arduino_node -->
@@ -2048,7 +2059,7 @@
           <polygon
              fill="none"
              stroke="#000000"
-             points="1127,-144 1127,-108 1181,-108 1181,-144 "
+             points="1181,-108 1181,-144 1127,-144 1127,-108 "
              id="polygon85" />
           <text
              text-anchor="middle"
@@ -2197,7 +2208,7 @@
     <g
        id="edge26"
        class="edge"
-       transform="translate(0,-16.503918)">
+       transform="translate(0,-142.53393)">
       <title
          id="title92">t___corrected_cmd_vel-&gt;n___velocity_smoother_nodelet_manager</title>
       <path
@@ -2210,7 +2221,7 @@
          fill="#000000"
          stroke="#000000"
          stroke-width="1.25"
-         points="212.3343,-252.0502 209.0201,-262.1133 216.0189,-261.9836 "
+         points="216.0189,-261.9836 212.3343,-252.0502 209.0201,-262.1133 "
          id="polygon92" />
     </g>
     <!-- t___cmd_vel_raw&#45;&gt;n___drive_amp_node -->
@@ -2224,7 +2235,7 @@
          fill="none"
          stroke="#000000"
          stroke-width="1.25"
-         d="M 482.30695,-457.22305 C 406.52065,-481.15968 352.6564,-478.8915 284.8161,-464.2296"
+         d="M 482.23019,-457.42056 C 475.586,-478.25368 380.10984,-530.42391 301.12335,-568.37757"
          id="path93"
          sodipodi:nodetypes="cc" />
       <polygon
@@ -2232,7 +2243,8 @@
          stroke="#000000"
          stroke-width="1.25"
          points="274.6798,-462.0516 283.7214,-467.5743 285.1919,-460.7305 "
-         id="polygon93" />
+         id="polygon93"
+         transform="rotate(39.375492,437.73499,-490.22346)" />
     </g>
     <!-- t___rslidar_points&#45;&gt;n___rslidar_nodelet_manager -->
     <g

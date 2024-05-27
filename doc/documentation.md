@@ -162,27 +162,26 @@ RUN mv CMakeLists.txt src \
     # Copy the simulation packages to the source directory
     && cp -r dependencies/* src \
     # Compile the packages that were in the separation directory
-    && ls dependencies | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
+    && ls dependencies | xargs -n 1 basename | xargs catkin_make --only-pkg-with-deps \
     # Delete the separation directory
     && rm -rf dependencies
 # ... same for other isolated packages
 ```
 
-Finally we have the two target stages, `simulation` and `real`. In `simulation`, we copy the simulation packages into our workspace and compile them separately whereas in `real`, we skip these packages as they are not needed and set our `ROS_MASTER_URI` to the RR100 robot and our `ROS_IP` to our IP address :
+Finally we have the two target stages, `simulation` and `real`. In `simulation`, we keep our `ROS_MASTER_URI` as localhost and in `real`, we set our `ROS_MASTER_URI` to the RR100 robot and our `ROS_IP` to our IP address :
 ```Dockerfile
 # Simulation target
 FROM builder as simulation
-# Compile the simulation packages
-RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
-    && cp -r simulation/* src \
-    && ls simulation | xargs -n 1 basename | xargs catkin_make --use-ninja --only-pkg-with-deps \
-    && rm -rf simulation
+ENV ROS_MASTER_URI=http://localhost:11311
+RUN touch TARGET_SIMULATION
 
 # Real robot target
 FROM builder as real
 ARG IP # Declare that the "IP" build argument will be used 
 ENV ROS_MASTER_URI=http://rr-100-07:11311 # Set the container's ROS master to the RR100
 ENV ROS_IP=${IP} # Set the container's ROS IP as the build argument passed
+
+RUN touch TARGET_REAL
 ```
 > [!NOTE]
 > The `$IP` argument is passed as a build argument by the build_and_run.sh script; else you can define it at the top of the Dockerfile or pass it directly when running `docker build` with `--build-arg IP=<your IP address>`.
@@ -190,6 +189,17 @@ ENV ROS_IP=${IP} # Set the container's ROS IP as the build argument passed
 ## Build and run script
 > [!NOTE]
 > Under construction
+<!-- 
+1. Parses passed arguments
+2. Check if user asked to rebuild
+   1. If yes, jump straigth to building and running the image
+   2. else check if image already exists
+      1. if yes, check if build context has changed since last build (files changed or different build target)
+         1. if changed, ask user if they want to rebuild and go to building and running if yes and exit if not
+      2. else jump ask user if they want ot build this new image and exit if not
+3. build image
+4. run image
+ -->
 
 ## Overview of the project
 ### Package interaction
@@ -220,9 +230,9 @@ Finally, `yocs_velocity_smoother` takes in our corrected velocities computed by 
 > Under construction
 
 Below is a node graph representing the relevant nodes and topics to the robot's navigation stack. 
-<div class="figure">
+<div class="figure"> 
   <img src="resources/node_graph_real.svg"/>
-  <p align="center"><i>Package node graph, ellipses represent nodes and rectangles represent topics</i></p>
+  <p align="center"><i>Project (simplified) node graph, ellipses represent nodes, outer rectangles represent namespaces and rectangles represent topics</i></p>
 </div>
 
 
@@ -343,18 +353,24 @@ src/rr100_drive_amp/
 
 `rr100_drive_amp` takes in velocity commands calculated by `move_base` and the filtered odometry (wheel odometry fused with IMU data) then computes corrected velocity commands using a simple PID controller.
 
+The `drive_amp.py` node subscribes to the `~/twist_in` topic for input velocity commands and `~/odom_in` for odometry and publishes the corrected commands to `~/corrected_cmd_vel` by default. These subscriptions/publications are remapped to topics passed as arguments to the provided launch file (`launch/drive_amp.launch`).
+
 There are multiple ways to configure the package :
 1. Edit the PID gains in `config/drive_amp_params.yaml`
 2. Use `rqt_reconfigure` to dynamically change the PID gains
 
-The correction node can also dynamically be activated and deactivated using `rqt_reconfigure`. When deactivated, the node simply forwards the latest velocity command it received and skips the PID control loop.
+The correction node can also dynamically be activated and deactivated using `rqt_reconfigure`. When deactivated, the node simply forwards the latest velocity command it received and skips the PID control loop altogether.
 
-The current PID gain values work decently with our RR100 but could probably be further tuned for better results. For this, one could use `rqt_plot` to visualize velocity commands, corrected velocities and odometry while editing PID gains with `rqt_reconfigure`.
+The current PID gain values are serviceable with our RR100 but could probably be further tuned for better results. For this, one could use `rqt_plot` to visualize velocity commands, corrected velocities and odometry while editing PID gains with `rqt_reconfigure`.
 
 ### yocs_velocity_smoother
-<!-- TODO -->
-> [!NOTE]
-> Under construction
+Because the package `rr100_drive_amp` has no idea what the robot's maximum acceleration and velocities are, it was necessary to limit and smooth the corrected velocity commands that were output by it. 
+
+This is where the `yocs_velocity_smoother` package comes into play. This takes incoming velocity commands and smoothes them out while respecting the velocity and acceleration limits it takes as parameters.
+
+The acceleration and velocity limits have been edited to suit our RR100 and should work out of the box. If you still wish to change these parameters around, they are located in `yocs_velocity_smoother/param/rr100_smoother.yaml`.
+
+The parameters can also be dynamically edited using `rqt_reconfigure`.
 
 ### rr100_navigation
 <!-- TODO -->

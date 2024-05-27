@@ -74,6 +74,7 @@ compare_builds() {
     fi
 }
 
+# Show usage if no arguments passed
 if [[ $# = 0 ]]; then
     usage
 fi
@@ -131,6 +132,11 @@ fi
 echo -e "Rebuild : $rebuild\n"
 if [ "$rebuild" = false ]; then
     # Check if the docker image with tag name $tag exists
+    # Explanation : 
+    # docker image inspect $tag >/dev/null 2>&1 : 
+    #### - redirect ALL output (stdout AND stderr) to /dev/null to discard it
+    # if no error exit code, will execute echo "..."; compare_build
+    # else ask if user wants to build new image
     if docker image inspect $tag >/dev/null 2>&1; then
         echo "Image '$tag' exists locally"
         compare_builds
@@ -145,6 +151,7 @@ if [ "$rebuild" = false ]; then
     fi
 fi
 
+# If rebuild needed
 if [ "$rebuild" = true ]; then
     echo -e "Build target : $target"
     if [ "$target" != "real" ] && [ "$target" != "simulation" ]; then

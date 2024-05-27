@@ -84,7 +84,7 @@
 
         <arg name="cmd_vel_topic" value="$(arg cmd_vel_topic)" />
         <arg name="scan_topic" value="$(arg laserscan_topic)" />
-        <arg name="odom_topic" value="$(arg odom_topic)" />
+        <arg name="odom_topic" value="/odometry/filtered" />
 s
         <arg name="cam_point_cloud_enabled" value="$(arg cam_point_cloud_enabled)" />
         <arg name="cam_point_cloud_topic" value="$(arg cam_point_cloud_topic)" />
@@ -95,7 +95,7 @@ s
 
     <include file="$(find rr100_drive_amp)/launch/drive_amp.launch">
         <arg name="twist_in" value="$(arg cmd_vel_topic)"/>
-        <arg name="odom_in" value="$(arg odom_topic)"/>
+        <arg name="odom_in" value="/odometry/filtered"/>
         
         <arg name="twist_out" value="corrected_cmd_vel"/>
     </include>
@@ -107,7 +107,7 @@ s
         <arg name="config_file"           value="$(find yocs_velocity_smoother)/param/rr100_smoother.yaml"/>
         <arg name="raw_cmd_vel_topic"     value="corrected_cmd_vel"/>
         <arg name="smooth_cmd_vel_topic"  value="cmd_vel"/>
-        <arg name="odom_topic"            value="$(arg odom_topic)"/>
+        <arg name="odom_topic"            value="/odometry/filtered"/>
     </include>
 
     <node name="rviz" type="rviz" pkg="rviz"
