@@ -186,7 +186,8 @@ RUN touch TARGET_REAL
 > [!NOTE]
 > The `$IP` argument is passed as a build argument by the build_and_run.sh script; else you can define it at the top of the Dockerfile or pass it directly when running `docker build` with `--build-arg IP=<your IP address>`.
 
-## Build and run script
+## Overview of the project
+### Build and run script
 > [!NOTE]
 > Under construction
 <!-- 
@@ -200,8 +201,12 @@ RUN touch TARGET_REAL
 3. build image
 4. run image
  -->
+The project contains a convenience script for building and running the project with Docker. In this section, we will go over the basics of what that script does, in case one would like to edit it to suit their needs.
 
-## Overview of the project
+The script does a few things when run :
+1. The script accepts both short-hand options and long-hand options (`--image-tag` and `-i` for example). Before parsing (due to limitations of the built-in POSIX command `getopts`) the script first needs to convert these long-hand arguments to their equivalent short-hand flags/options. This means that you need to find a unique association between a `--<option>` and a `-<flag>`. For example, the `--image-tag` and the `--ip-address` options of the script both start with the letter 'i' but the `-<flag>` for `--ip-address` is `-a` because `-i` was already associated with `--image-tag`.
+2. 
+
 ### Package interaction
 This project makes use of many packages oriented towards autonomous robot navigation, many of which are standard in the ROS ecosystem. These packages all handle a different aspect of navigation, namely mapping, localizing, and path planning for the robot and we will go over how each of them works in a later section.
 
