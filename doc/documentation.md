@@ -65,7 +65,7 @@ All subsequent instructions are then executed inside of this base Ubuntu image.
 > [!NOTE]
 > The notation ubuntu:18.04, follows the name:tag standard for naming Docker images which you will also see in this project's Dockerfile
 
-Another common set of instructions is the `ADD`/`COPY` instructions. These instruction are very similar in that they both copy files into a container but `ADD` has additional functionnality. `ADD` can automatically extract standard compression formats into a container and can also be used to fetch resources from a URL.
+Another common set of instructions is the `ADD`/`COPY` instructions. These instruction are very similar in that they both copy files into a container but `ADD` has additional functionality. `ADD` can automatically extract standard compression formats into a container and can also be used to fetch resources from a URL.
 > [!TIP]
 > You'll mostly want to use `COPY` for copying files from one stage to another in a multi-stage build or if you need files from your build context (your host project files) inside of your containers. `ADD` is best for when you need to download a remote artifact as part of your build and should be used instead of manually fetching files with `wget` or `curl` and `tar`. See the [Best practices for Dockerfile instructions](https://docs.docker.com/develop/develop-images/instructions/#add-or-copy) for more details
 
@@ -90,7 +90,7 @@ user@machine:~/hello_world$ docker build --tag hello-world:v1.0.0 .
 ##### Running containers
 To run containers, you will need to use the `docker run` command. The `docker run` command runs a command in a new container, pulling the image if needed and starting the container. The command takes the following format `docker run [OPTIONS] <IMAGE> [COMMAND] [ARG...]` and if a command is not specified, Docker only executes the image's `ENTRYPOINT` or `CMD`.
 > [!NOTE]
-> See [here](https://docs.docker.com/reference/dockerfile/#understand-how-cmd-and-entrypoint-interact) for details about `ENTRYPOINT` and `CMD`. Something that isn't mentionned in the linked section is that docker images inherit `ENTRYPOINT` and `CMD` from its base image.
+> See [here](https://docs.docker.com/reference/dockerfile/#understand-how-cmd-and-entrypoint-interact) for details about `ENTRYPOINT` and `CMD`. Something that isn't mentioned in the linked section is that docker images inherit `ENTRYPOINT` and `CMD` from its base image.
 
 `docker run` can take many options, with the most common ones being:
 - `-i, --interactive` which keeps the containers `STDIN` open to inputs
@@ -130,7 +130,7 @@ RUN mkdir -p /tmp/opt && \
 ```
 We copy the source directory to this stage and copy every `package.xml`/`CATKIN_IGNORE` file to a temporary directory while keeping the original source tree structure. In this same stage, we separate dependencies from simulator packages and from actual project packages to be able to compile them in separate docker layers later.
 
-Next comes the `builder` stage that inherits from the `apt-depends` stage. In `builder` we first install the RR100 ROS packages given aongside the robot, then we copy the `package.xml` files from the `cacher` stage into our final workspace and run `rosdep install` to install our packages' dependencies :
+Next comes the `builder` stage that inherits from the `apt-depends` stage. In `builder` we first install the RR100 ROS packages given alongside the robot, then we copy the `package.xml` files from the `cacher` stage into our final workspace and run `rosdep install` to install our packages' dependencies :
 ```Dockerfile
 FROM apt-depends as builder
 ARG WORKSPACE
@@ -173,7 +173,7 @@ Finally we have the two target stages, `simulation` and `real`. In `simulation`,
 # Simulation target
 FROM builder as simulation
 ENV ROS_MASTER_URI=http://localhost:11311
-RUN touch TARGET_SIMULATION
+LABEL target=simulation
 
 # Real robot target
 FROM builder as real
@@ -181,7 +181,7 @@ ARG IP # Declare that the "IP" build argument will be used
 ENV ROS_MASTER_URI=http://rr-100-07:11311 # Set the container's ROS master to the RR100
 ENV ROS_IP=${IP} # Set the container's ROS IP as the build argument passed
 
-RUN touch TARGET_REAL
+LABEL target=real
 ```
 > [!NOTE]
 > The `$IP` argument is passed as a build argument by the build_and_run.sh script; else you can define it at the top of the Dockerfile or pass it directly when running `docker build` with `--build-arg IP=<your IP address>`.
@@ -193,7 +193,7 @@ RUN touch TARGET_REAL
 <!-- 
 1. Parses passed arguments
 2. Check if user asked to rebuild
-   1. If yes, jump straigth to building and running the image
+   1. If yes, jump straight to building and running the image
    2. else check if image already exists
       1. if yes, check if build context has changed since last build (files changed or different build target)
          1. if changed, ask user if they want to rebuild and go to building and running if yes and exit if not
@@ -213,16 +213,26 @@ The script does a few things when run :
 3. The script then constructs the build arguments and builds the image
 4. Finally, the script runs the image
 
+A more specific explanation on what each part does is available as comments in the script.
+
+Another thing to mention is how the script actually compares builds. You may have noticed the use of labels in the previously described Dockerfile. These labels are used to identify our project's images and store the the hash the build context the image was built in. 
+
+This hash is computed by the script by reading every `COPY` instruction in the Dockerfile from the host to the container and extracting the path to the copied files/directories and hashing all of their content with `sha256sum`. It is then  passed to the docker builder as a build argument and stored as a label (`rhoban.rr100.build.sha`).
+
+When comparing builds, the script uses a python program which extracts any label from the specified docker image and prints it out to standard output (which is captured by the calling shell script) if it exists.
+
+We also store the build target of each build in labels to check if the user changed build targets between consecutive builds. Finally, we also use labels to identify our project's docker images (in the format `"rhoban.image.name"="<name>"`) in order to avoid overwriting one of the user's unrelated docker image (in case they gave an already in-use image name corresponding to an unrelated Dockerfile)
+
 ### Package interaction
 This project makes use of many packages oriented towards autonomous robot navigation, many of which are standard in the ROS ecosystem. These packages all handle a different aspect of navigation, namely mapping, localizing, and path planning for the robot and we will go over how each of them works in a later section.
 
-For now, let's focus on how each of these packages are integrated in our autonomous navigation package and how they intreact with each other. Below, a diagram illustrates how each package interacts with the robot and the other packages.
+For now, let's focus on how each of these packages are integrated in our autonomous navigation package and how they interact with each other. Below, a diagram illustrates how each package interacts with the robot and the other packages.
 <div>
   <img src="resources/rr100_package_diagram.svg"/><br>
   <p align="center"><i>RR100 navigation package diagram</i></p>
 </div>
 
-First, `rslidar_laserscan` (internally uses `pointcloud_to_laserscan`) takes in point clouds recorded by the RSLiDAR-16 on the robot and converts them to a planar 2D point cloud in the standard ROS format `sensor_msgs/LaserScan`. This converted point cloud is then piped to the SLAM package `slam_toolbox`, which reads the robot's transform tree (more specifically the transform from the base frame to the LiDAR frame and from the odometry frame to the base frame) and the 2D laserscan to compute an occupancy grid used as a map (how this is done will be detailed in a later section) which is then published.
+First, `rslidar_laserscan` (internally uses `pointcloud_to_laserscan`) takes in point clouds recorded by the RSLiDAR-16 on the robot and converts them to a planar 2D point cloud in the standard ROS format `sensor_msgs/LaserScan`. This converted point cloud is then piped to the SLAM package `slam_toolbox`, which reads the robot's transform tree (more specifically the transform from the base frame to the LiDAR frame and from the odometry frame to the base frame) and the 2D laser scan to compute an occupancy grid used as a map (how this is done will be detailed in a later section) which is then published.
 
 In parallel, `robot_localization` (a pose estimation package built with Kalman filters) takes in wheel encoder odometry data and IMU data published by the robot and fuses these sensor measurements to estimate to robot's pose in the odometry frame and publish this pose to the `tf` tree (which is used by `slam_toolbox`).
 
@@ -234,7 +244,7 @@ Subsequently `move_base`, which can be subdivided into 3 packages (2 path planni
 
 These velocity commands are then corrected by the `rr100_drive_amp` package which read our odometry estimations and target velocities (computed by `move_base`) and uses this data to compute corrections (using a PID) to apply to the computed velocities so that our odometry reaches these target velocities.
 
-Finally, `yocs_velocity_smoother` takes in our corrected velocities computed by `rr100_drive_amp` and *smoothes* them with respect to our robot's maximum velocities and accelerations (linear and angular).
+Finally, `yocs_velocity_smoother` takes in our corrected velocities computed by `rr100_drive_amp` and *smooths* them with respect to our robot's maximum velocities and accelerations (linear and angular).
 
 ### Node and topic interaction
 > [!NOTE]
@@ -274,7 +284,7 @@ src/rslidar_laserscan/
 <p align="center"><i>Package structure</i></p>
 </div>
 
-The `rslidar_laserscan` package, like mentionned in [Package interaction](#package-interaction), handles `sensor_msgs/PointCloud2` messages conversion to `sensor_msgs/LaserScan` messages. This package makes use of the standard ROS package `pointcloud_to_laserscan`.
+The `rslidar_laserscan` package, like mentioned in [Package interaction](#package-interaction), handles `sensor_msgs/PointCloud2` messages conversion to `sensor_msgs/LaserScan` messages. This package makes use of the standard ROS package `pointcloud_to_laserscan`.
 
 The `launch` directory contains every launch file used to configure and launch the nodes/nodelet. When running this package on a distant host, ie. *not* on the robot, it is recommended to use the `rslidar_laserscan_nodelet.launch` launch file. This launch file uses nodelets instead of nodes and registers the point cloud conversion nodelet on the robot's `rslidar_nodelet_manager`. This allows ROS to use *intra-process* communication as opposed to classic *inter-process* transfers that standalone nodes usually use, which results in much greater communication throughput.
 
@@ -324,7 +334,7 @@ The `rr100_slam` package is a wrapper package around `slam_toolbox` which contai
 The package exposes 2 modes : SLAM mode and localization-only mode. These two modes are launched and set up by using `slam_2D.launch` (that loads the parameters in `mapper_params_online_async.yaml`) and `localization.launch` (that loads parameters in `mapper_params_localization.yaml`) respectively.
 
 > [!NOTE]
-> The author and main maintainer of `slam_toolbox` recommends keeping the default values set in the parameter files as they're good enough for most applications. The list of arguments is available [here](https://github.com/SteveMacenski/slam_toolbox/blob/noetic-devel/README.md#configuration) if you still widh to modify them.
+> The author and main maintainer of `slam_toolbox` recommends keeping the default values set in the parameter files as they're good enough for most applications. The list of arguments is available [here](https://github.com/SteveMacenski/slam_toolbox/blob/noetic-devel/README.md#configuration) if you still wish to modify them.
 
 The `slam_2D.launch`launch file runs the online asynchronous SLAM node of the `slam_toolbox` package with the `online_async.launch` file. This node handles incoming laser scans asynchronously with a best-effort policy (meaning that if the node can't meet the frequency of incoming scans, it will drop some of them).
 
@@ -340,7 +350,7 @@ Simple PID controller:
   - computes corrected velocity command and publishes
 Config in yaml to set PID gains or dynamic reconfigure -->
 
-This package was written because at low speeds (when the robot tries to execute very sharp turns for exemple) the robot would get stuck (probably due to friction).
+This package was written because at low speeds (when the robot tries to execute very sharp turns for example) the robot would get stuck (probably due to friction).
 
 <div>
 <pre>
@@ -377,7 +387,7 @@ The current PID gain values are serviceable with our RR100 but could probably be
 ### yocs_velocity_smoother
 Because the package `rr100_drive_amp` has no idea what the robot's maximum acceleration and velocities are, it was necessary to limit and smooth the corrected velocity commands that were output by it. 
 
-This is where the `yocs_velocity_smoother` package comes into play. This takes incoming velocity commands and smoothes them out while respecting the velocity and acceleration limits it takes as parameters.
+This is where the `yocs_velocity_smoother` package comes into play. This takes incoming velocity commands and smooths them out while respecting the velocity and acceleration limits it takes as parameters.
 
 The acceleration and velocity limits have been edited to suit our RR100 and should work out of the box. If you still wish to change these parameters around, they are located in `yocs_velocity_smoother/param/rr100_smoother.yaml`.
 
