@@ -204,8 +204,14 @@ RUN touch TARGET_REAL
 The project contains a convenience script for building and running the project with Docker. In this section, we will go over the basics of what that script does, in case one would like to edit it to suit their needs.
 
 The script does a few things when run :
-1. The script accepts both short-hand options and long-hand options (`--image-tag` and `-i` for example). Before parsing (due to limitations of the built-in POSIX command `getopts`) the script first needs to convert these long-hand arguments to their equivalent short-hand flags/options. This means that you need to find a unique association between a `--<option>` and a `-<flag>`. For example, the `--image-tag` and the `--ip-address` options of the script both start with the letter 'i' but the `-<flag>` for `--ip-address` is `-a` because `-i` was already associated with `--image-tag`.
-2. 
+1. The script accepts both short-hand options and long-hand options (`--image-tag` and `-i` for example). Before parsing (due to limitations of the built-in POSIX command `getopts`) the script first needs to convert these long-hand arguments to their equivalent short-hand flags/options. This means that you need to find a unique association between a `--<option>` and a `-<flag>`. For example, the `--image-tag` and the `--ip-address` options of the script both start with the letter 'i' but the `-<flag>` for `--ip-address` is `-a` because `-i` was already associated with `--image-tag`. After this, the script parses the converted arguments with `getopts`.
+2. Next, the script checks if the image needs to be rebuilt. For this, it does a few things:
+   * if the user passed the `--rebuild`/`-r` option, the script directly goes to rebuilding the image and running it
+   * else, it checks if the image with the name passed as an argument exists
+     * if it does, it then checks that the image name that was passed to it corresponds to an image built by our Dockerfile (by inspecting the metadata of the image) and finally compares the current build context (ie. the project files copied over to the image) with the one the image was built in by hashing the files in the build context and comparing it to the one in the metadata of the image. If any of these don't match, the script prompts the user for confirmation before rebuilding the image.
+     * if it doesn't exist, it asks the user if they want to build it and if they do, the script continues to building and running the image.
+3. The script then constructs the build arguments and builds the image
+4. Finally, the script runs the image
 
 ### Package interaction
 This project makes use of many packages oriented towards autonomous robot navigation, many of which are standard in the ROS ecosystem. These packages all handle a different aspect of navigation, namely mapping, localizing, and path planning for the robot and we will go over how each of them works in a later section.
