@@ -1,5 +1,10 @@
 #!/bin/bash
 
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+GREEN='\033[0;32m'
+CLEAR='\033[0m' # No Color
+
 # Default variables initialization
 builder="builder"
 target="real"
@@ -27,6 +32,7 @@ Options :
 confirmed=
 
 confirm() {
+    echo -e "$BLUE"
     read -p "$1 [Y/n] : " answer
     while [ "${answer,,}" != "y" ] && [ "${answer,,}" != "n" ]; do
         read -p "$1 [Y/n] : " answer
@@ -36,12 +42,13 @@ confirm() {
     else
         confirmed=false
     fi
+    echo -e "$CLEAR"
 }
 
 compare_builds() {
     changed=false
 
-    project=$(python3 util/inspect_image.py "$tag" rhoban.rr100.image.name)
+    project=$(python3 util/inspect_image.py "$tag" rhoban.project.name)
     if [ "$?" -ne 0 ] || [ "$project" != "rhoban-rr100" ]; then
         echo "$project"
         confirm "The image $tag does not seem to have been built using this project's Dockerfile, are you sure you want to rebuild this image"
@@ -54,7 +61,7 @@ compare_builds() {
     checksum_container=$(python3 util/inspect_image.py "$tag" rhoban.rr100.build.sha)
 
     if [ "$target" != "$previous_target" ]; then
-        echo "Target changed between builds"
+        echo -e "${BLUE}Target changed between builds${CLEAR}"
         changed=true
     else
         echo "Build context hash : $checksum_host"
@@ -100,7 +107,7 @@ while getopts t:b:hi:rgc:a: option; do
         tag="$OPTARG"
         # If this option with required a value is missing said value, echo an error and exit
         if [[ ${OPTARG:0:1} == '-' ]]; then
-            echo "Invalid value '$OPTARG' given to -$option" >&2
+            echo -e "${RED}Invalid value '$OPTARG' given to -$option${CLEAR}" >&2
             exit 3
         fi
         ;;
@@ -108,7 +115,7 @@ while getopts t:b:hi:rgc:a: option; do
         target="$OPTARG"
         # If this option with required a value is missing said value, echo an error and exit
         if [[ ${OPTARG:0:1} == '-' ]]; then
-            echo "Invalid value '$OPTARG' given to -$option" >&2
+            echo "${RED}Invalid value '$OPTARG' given to -$option${CLEAR}" >&2
             exit 3
         fi
         ;;
@@ -120,12 +127,12 @@ while getopts t:b:hi:rgc:a: option; do
     esac
 done
 
-if [ -z "$tag" ]; then
-    echo "Error: missing image tag name"
-    usage
-fi
+# Dead code ?
+# if [ -z "$tag" ]; then
+#     echo "${RED}Error: missing image tag name${CLEAR}"
+#     usage
+# fi
 
-echo -e "Rebuild : $rebuild\n"
 # Compute the SHA256 checksum of the files copied to the Docker image as well as the Dockerfile
 ## Uses perl to find raw COPY instructions (ie. copying build context files/dirs into the image)
 ## in the Dockerfile and get their names. Then, find all files in the extracted file/directory names
@@ -140,7 +147,7 @@ if [ "$rebuild" = false ]; then
     # if no error exit code, will execute echo "..."; compare_build
     # else ask if user wants to build new image
     if docker image inspect $tag >/dev/null 2>&1; then
-        echo "Image '$tag' exists locally"
+        echo -e "${GREEN}Image '$tag' exists locally${CLEAR}\n"
         compare_builds
     else
         # else if it doesn't, ask the user if they want to build it or not
@@ -152,6 +159,8 @@ if [ "$rebuild" = false ]; then
         rebuild=true
     fi
 fi
+
+echo -e "Rebuild : $rebuild\n"
 
 # If rebuild needed
 if [ "$rebuild" = true ]; then
@@ -171,11 +180,11 @@ if [ "$rebuild" = true ]; then
     args+=" --build-arg BUILD_SHA=$checksum_host"
 
     # Build image and check for errors
-    echo -e "Building image '$tag'... \n"
+    echo -e "${GREEN}Building image '$tag'... ${CLEAR}\n"
     docker build . -t "$tag" --target "$target" $args
     code=$?
     if [ $code -ne 0 ]; then
-        echo "Error during build : exit code $code, aborting..."
+        echo "${RED}Error during build : exit code $code, aborting...${CLEAR}"
         exit $code
     fi
 fi
@@ -188,7 +197,7 @@ if [ "$gpu"=true ]; then
 fi
 
 
-echo -e "Running container '$container' with image '$tag'...\n"
+echo -e "${GREEN}Running container '$container' with image '$tag'...${CLEAR}"
 # If you wish to add devices your host has access to to the container,
 # you can add as many '--device' or '-d' followed by the path to the /dev/*
 # you want to access inside the container BEFORE the the docker image tag

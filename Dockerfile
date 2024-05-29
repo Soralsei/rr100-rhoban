@@ -5,7 +5,7 @@ ARG BUILD_SHA
 
 # Cache apt dependencies
 FROM $FROM_IMAGE as apt-depends
-LABEL "rhoban.rr100.image.name"="rhoban-rr100" \
+LABEL "rhoban.project.name"="rhoban-rr100" \
 "author"="Kohio Deflesselle"
 
 RUN --mount=type=cache,target=/var/cache/apt \
@@ -51,7 +51,6 @@ RUN mkdir ../simulation \
 
 #Building stage
 FROM apt-depends as builder
-ARG BUILD_SHA
 ARG WORKSPACE
 
 WORKDIR ${WORKSPACE}
@@ -68,8 +67,6 @@ RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
 && rosdep install -r -y --from-paths ./src --ignore-src --rosdistro ${ROS_DISTRO} \
 && apt-get upgrade -y \
 && rm -rf /var/lib/apt/lists/*
-
-LABEL "rhoban.rr100.build.sha"=${BUILD_SHA}
 
 # Copy files from cacher stage
 COPY --from=cacher $WORKSPACE/src/ .
@@ -101,6 +98,9 @@ RUN sed --in-place --expression \
     && echo "source ${WORKSPACE}/devel/setup.bash" >> ~/.bashrc
 
 COPY Dockerfile .
+
+ARG BUILD_SHA
+LABEL "rhoban.rr100.build.sha"=${BUILD_SHA}
 
 FROM builder as simulation
 ENV ROS_MASTER_URI=http://localhost:11311
