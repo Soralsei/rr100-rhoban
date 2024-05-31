@@ -32,6 +32,8 @@
     <arg name="use_static_map" default="true" />
     <arg name="generate_map" default="true" />
     <arg name="map_resolution" default="0.05" doc="Map cell resolution" />
+    <arg name="map_path" default="$(find rr100_navigation)/maps/map.posegraph"
+    doc="Map (posegraph format) file path" />
 
     <arg name="global_costmap_width" default="100.0"
         doc="Global costmap width (in meters) if no static map is specified" />
@@ -44,24 +46,24 @@
     </include>
 
     <group unless="$(arg generate_map)">
-        <arg name="pgm_map_path" default="$(find rr100_navigation)/maps/map.pgm"
-            doc="Map (pbm format) file path" />
-        <arg name="posegraph_map_path" default="$(find rr100_navigation)/maps/map.posegraph"
-            doc="Map (posegraph format) file path" />
-        <node name="map_server" type="map_server" pkg="map_server"
-            args="$(arg pgm_map_path)" />
+        <!-- <arg name="pgm_map_path" default="$(find rr100_navigation)/maps/map.pgm"
+            doc="Map (pbm format) file path" /> -->
+        <!-- <node name="map_server" type="map_server" pkg="map_server"
+            args="$(arg pgm_map_path)" /> -->
 
         <include file="$(find rr100_slam)/launch/localization_only.launch">
             <arg name="use_pointcloud_to_laserscan_nodelet"
                 value="$(arg use_pointcloud_to_laserscan_nodelet)" />
             <arg name="nodelet_manager" value="$(arg nodelet_manager)" />
+            
             <arg name="laserscan_topic" value="$(arg laserscan_topic)" />
             <arg name="pointcloud_topic" value="$(arg pointcloud_topic)" />
+            
+            <arg name="map_path" value="$(arg map_path)" />
+            <arg name="map_resolution" value="$(arg map_resolution)" />
 
             <arg name="simulated" value="$(arg simulated)" />
             <arg name="use_rviz" value="false" />
-            <arg name="map_path" value="$(arg posegraph_map_path)" />
-            <arg name="map_resolution" value="$(arg map_resolution)" />
         </include>
     </group>
 
@@ -70,9 +72,12 @@
             <arg name="use_pointcloud_to_laserscan_nodelet"
                 value="$(arg use_pointcloud_to_laserscan_nodelet)" />
             <arg name="nodelet_manager" value="$(arg nodelet_manager)" />
-            <arg name="map_resolution" value="$(arg map_resolution)" />
+            
             <arg name="laserscan_topic" value="$(arg laserscan_topic)" />
             <arg name="pointcloud_topic" value="$(arg pointcloud_topic)" />
+            
+            <arg name="map_resolution" value="$(arg map_resolution)" />
+            <arg name="map_path" value="$(arg map_path)" />
 
             <arg name="simulated" value="$(arg simulated)" />
             <arg name="use_rviz" value="false" />
