@@ -35,7 +35,7 @@
 
 
 ## Docker basics
-This section is useful for those who aren't familiar with Docker and either don't have access to a PC running Ubuntu 18.04 or want to avoid installing every dependency of this project to their computer by keeping it in a standalone container.
+This section is useful for those who aren't familiar with Docker and don't have access to a PC with an Ubuntu version that is incompatible with ROS Noetic (for example Ubuntu 22.04) or want to avoid installing every dependency of this project to their computer by keeping it in a standalone container.
 <details>
 <summary>Click here to expand</summary>
 
@@ -57,13 +57,13 @@ To build you own image and run containers, you will have to write a Dockerfile a
 #### Dockerfile instructions
 One of the first (and usually *the* first) instruction you will encounter in Dockerfiles is the `FROM` instruction. This tells the builder which parent image to inherit from when building your own image. This means we can use pre-existing images (such a the `ros:$ROS_DISTRO` images) to build our applications without having to install create the environment from scratch.
 
-For example, this instructions sets your base image to the 18.04  release of Ubuntu:
+For example, this instructions sets your base image to the 20.04  release of Ubuntu:
 ```Dockerfile
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 ```
 All subsequent instructions are then executed inside of this base Ubuntu image.
 > [!NOTE]
-> The notation ubuntu:18.04, follows the name:tag standard for naming Docker images which you will also see in this project's Dockerfile
+> The notation ubuntu:20.04, follows the name:tag standard for naming Docker images which you will also see in this project's Dockerfile
 
 Another common set of instructions is the `ADD`/`COPY` instructions. These instruction are very similar in that they both copy files into a container but `ADD` has additional functionality. `ADD` can automatically extract standard compression formats into a container and can also be used to fetch resources from a URL.
 > [!TIP]
@@ -201,7 +201,7 @@ LABEL target=real
 3. build image
 4. run image
  -->
-The project contains a convenience script for building and running the project with Docker. In this section, we will go over the basics of what that script does, in case one would like to edit it to suit their needs.
+The project contains a convenience script (located at the root of the project with the name `build_and_run.sh`) for building and running the project with Docker. In this section, we will go over the basics of what that script does, in case one would like to edit it to suit their needs.
 
 The script does a few things when run :
 1. The script accepts both short-hand options and long-hand options (`--image-tag` and `-i` for example). Before parsing (due to limitations of the built-in POSIX command `getopts`) the script first needs to convert these long-hand arguments to their equivalent short-hand flags/options. This means that you need to find a unique association between a `--<option>` and a `-<flag>`. For example, the `--image-tag` and the `--ip-address` options of the script both start with the letter 'i' but the `-<flag>` for `--ip-address` is `-a` because `-i` was already associated with `--image-tag`. After this, the script parses the converted arguments with `getopts`.
@@ -256,7 +256,6 @@ Below is a node graph representing the relevant nodes and topics to the robot's 
   <p align="center"><i>Project (simplified) node graph, ellipses represent nodes, outer rectangles represent namespaces and rectangles represent topics</i></p>
 </div>
 
-
 ## Per-package description
 
 ### rslidar_laserscan
@@ -291,17 +290,41 @@ The `launch` directory contains every launch file used to configure and launch t
 > [!NOTE]
 > As you may know, point cloud data structures that contain many points are usually quite large, and transferring these over the network at medium (~10Hz) frequencies would require a large portion of the available bandwidth, resulting in a global slow down of ROS.
 
-A custom node/nodelet was also implemented and can be used instead of the standard package but was found to be less effective at converting the point clouds than the standard one. However, this custom node is also dynamically reconfigurable and allows the user to choose a single ring from the LiDAR to use as a planar scan.
+A custom node/nodelet was also implemented and can be used instead of the standard package but was found to be less effective at converting the point clouds than the standard one. However, this custom node is also dynamically reconfigurable and allows the user to choose a single ring from the LiDAR to use as a planar scan. This custom node can be launched using the provided launch file located at `launch/unofficial_rslidar_laserscan.launch` and `launch/unofficial_rslidar_laserscan_nodelet.launch`
 
 #### Configuration
 To configure the package, a configuration file (`rslidar16_to_laserscan.yaml`) can be edited in the `cfg` folder. The parameters currently set should be tailored to the RSLiDAR-16 used on the RR100. However if you want to modify these parameters, an overview of the exposed parameters is available [here](http://wiki.ros.org/pointcloud_to_laserscan#Parameters).
 
 ### rr100_localization
-<!-- TODO -->
-> [!NOTE]
-> Under construction
 
-Data fusion package 
+This package, like [rr100_slam](#rr100_slam) wraps `slam_toolbox`, is a wrapper package around `robot_localization` which is a data fusion package aimed at localizing robots.
+
+Currently, only one configuration of this package is in use (`ekf_odom.launch` and `ekf_odom.yaml`) which handles localization in the odometric frame. However, another configuration is available which would handle global localization data fusion by fusing global positioning data from `slam_toolbox` and from another global position package like `amcl` or `gmcl`.
+
+#### Configuration
+The configuration for localization in the odometry frame is based a template EKF configuration file (`ekf.yaml`) located in the original repository for `robot_localization` on the `noetic-devel` branch. Our configuration file uses mostly default values except on values that directly relate to our RR100 robot or our use case, namely :
+- `two_d_mode` => `true`
+- `base_link_frame` => `base_footprint`
+- `world_frame` => `odom`
+- `odom0_config` :
+
+| Field            | x     | y     | z     |
+| ---------------- | ----- | ----- | ----- |
+| Position         | false | false | false |
+| Angle            | false | false | false |
+| Velocity         | true  | true  | true  |
+| Angular velocity | false | false | true  |
+| Acceleration     | false | false | false |
+
+- `imu0_config` :
+
+| Field            | x     | y     | z     |
+| ---------------- | ----- | ----- | ----- |
+| Position         | false | false | false |
+| Angle            | false | false | false |
+| Velocity         | false | false | false |
+| Angular velocity | true  | true  | true  |
+| Acceleration     | false | false | false |
 
 ### rr100_slam
 <div>
@@ -336,11 +359,15 @@ The package exposes 2 modes : SLAM mode and localization-only mode. These two mo
 > [!NOTE]
 > The author and main maintainer of `slam_toolbox` recommends keeping the default values set in the parameter files as they're good enough for most applications. The list of arguments is available [here](https://github.com/SteveMacenski/slam_toolbox/blob/noetic-devel/README.md#configuration) if you still wish to modify them.
 
-The `slam_2D.launch`launch file runs the online asynchronous SLAM node of the `slam_toolbox` package with the `online_async.launch` file. This node handles incoming laser scans asynchronously with a best-effort policy (meaning that if the node can't meet the frequency of incoming scans, it will drop some of them).
+The `slam_2D.launch`launch file runs the online asynchronous SLAM node of the `slam_toolbox` package with the `online_async.launch` file. This node handles incoming laser scans asynchronously with a best-effort policy (meaning that if the node can't meet the frequency of incoming scans, it will drop some of them). An optional argument is available to provide a map in the `.posegraph` format (a serialized map format used by `slam_toolbox`) to this launch file which will allow the SLAM package to continue mapping its environment. See [here](https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#lifelong-mapping) for more information on lifelong mapping.
 
-The `localization_only.launch` runs the localization node of the package which won't create permanent new nodes in the pose graph (meaning that it won't permanently map new spaces if it encounters some) and allows the robot to be manually localized by using Rviz's Pose estimation tool or by publishing a pose on the `/initialpose` topic.
+The `localization_only.launch` runs the localization node of the package which won't create permanent new nodes in the pose graph (meaning that it won't permanently map new spaces if it encounters some) and allows the robot to be manually localized by using Rviz's Pose estimation tool or by publishing a pose on the `/initialpose` topic. In this localization-only mode, providing a serialized map to the localization node is mandatory and one can do so by passing a path leading to a serialized map using the argument `map_path` of the launch file.
 
 In both of these launch files, one can pass the point cloud and laser scan topic as launch arguments, which will be used to launch the point cloud conversion node (in `rslidar_laserscan`) that's also started by the launch files, and to tell `slam_toolbox` what topic to subscribe to to receive the converted laser scans.
+
+The serialized maps can be put anywhere as long as the files are accessible to ROS. To serialize maps generated by `slam_toolbox`, the SLAM node exposes a service (`/slam_toolbox/serialize_map`) which can be called to serialize and save the pose-graph and map. A symmetric service exists to deserialize and load the pose-graph/map (`/slam_toolbox/deserialize_map`). 
+
+To have a better understanding of what the SLAM package exposes (in terms of topics, services and actions) it is highly recommended to read the README of the `slam_toolbox` project.
 
 ### rr100_drive_amp
 <!-- Package written because at low speed -> robot stalling
@@ -350,7 +377,7 @@ Simple PID controller:
   - computes corrected velocity command and publishes
 Config in yaml to set PID gains or dynamic reconfigure -->
 
-This package was written because at low speeds (when the robot tries to execute very sharp turns for example) the robot would get stuck (probably due to friction).
+This package was written to offset at problem at low speeds (during the execution of very sharp turns for example) where the robot would get stuck (probably due to friction).
 
 <div>
 <pre>
