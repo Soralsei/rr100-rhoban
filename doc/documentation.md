@@ -247,10 +247,8 @@ These velocity commands are then corrected by the `rr100_drive_amp` package whic
 Finally, `yocs_velocity_smoother` takes in our corrected velocities computed by `rr100_drive_amp` and *smooths* them with respect to our robot's maximum velocities and accelerations (linear and angular).
 
 ### Node and topic interaction
-> [!NOTE]
-> Under construction
 
-Below is a node graph representing the relevant nodes and topics to the robot's navigation stack. 
+Below is a node graph representing the relevant nodes and topics to the robot's navigation stack when running on the real robot. 
 <div class="figure"> 
   <img src="resources/node_graph_real.svg"/>
   <p align="center"><i>Project (simplified) node graph, ellipses represent nodes, outer rectangles represent namespaces and rectangles represent topics</i></p>
@@ -420,7 +418,50 @@ The acceleration and velocity limits have been edited to suit our RR100 and shou
 
 The parameters can also be dynamically edited using `rqt_reconfigure`.
 
+By default, the smoothing node of this package subscribes to `~/raw_cmd_vel` to get the velocities that need smoothing then publishes the smoothed velocity commands to `~/smooth_cmd_vel`. These topics are remapped to `/corrected_cmd_vel` and `/cmd_vel` respectively, ie. the output of our `drive_amp` node and the input of the robot's controller respectively.
+
 ### rr100_navigation
 <!-- TODO -->
 > [!NOTE]
 > Under construction
+<div>
+<pre>
+rr100_navigation/
+├── CMakeLists.txt
+├── config
+│   ├── costmap_common.yaml
+│   ├── global_costmap_slam.yaml
+│   ├── global_costmap_static.yaml
+│   ├── global_planner.yaml
+│   ├── local_costmap.yaml
+│   └── local_planner.yaml
+├── launch
+│   ├── move_base.launch
+│   └── rr100_navigation.launch
+├── maps
+│   └── ...
+├── package.xml
+└── rviz
+</pre>
+<p align="center"><i>Package structure</i></p>
+</div>
+
+`rr100_navigation` is a wrapper package around the `move_base` standard ROS navigation package as well as a launcher for all of the other packages in the project.
+
+To launch the navigation stack on the real robot, you can use the launch file located at `launch/rr100_navigation.launch`. This launch file takes in many launch arguments but all the defaults should be adapted to our RR100 robot. If launching in simulation, you would have to set these arguments when launching : 
+- `imu_topic:=imu7/data`
+- `simulated:=true`
+
+This launch file first launches the `ekf_odom` configuration of our `rr100_localization` package (while forwarding `imu_topic` and `odom_topic` arguments) for local state estimation which will be used in another layer of the stack. Then, if the user wants to generate a map, the launch file runs our `rr100_slam` package with the `slam_2d` configuration and else it runs the `localization_only` configuration.
+
+Next, the launch file runs the `move_base` package which will handle trajectory planning and following. `move_base` works by loading plugins that handle the different aspects of navigation like obstacle mapping and trajectory planning/executing. Currently, our project loads the following plugins for navigation :
+- For the global costmap :
+  - `costmap_2d/StaticLayer` : TODO
+  - `costmap_2d/InflationLayer` : TODO
+- For the local costmap :
+  - `costmap_2d/ObstacleLayer` : TODO
+  - `costmap_2d/InflationLayer` : TODO
+- `global_planner/GlobalPlanner` : handles global path planning by using a *global* costmap (ie. a map of the robot's whole environment). This global path planning only happens when the navigation stack receives a new goal by default however it is possible to override this behavior by setting the `GlobalPlanner/frequency` parameter to a value above 0 in `global_planner.yaml`. The default path planning algorithm of `global_planner/GlobalPlanner` is  Dijkstra's algorithm running on the global costmap (represented as a grid of pixels with a *cost* ranging from 0 to 255 as values) but other algorithms are available like the A* path finding algorithm.
+- `teb_local_planner/TebLocalPlannerROS` : TODO
+
+There are multiple ways to send navigation goals to then running navigation stack. One such way is through the GUI of Rviz : a button labeled "2D Nav Goal" enables the user to click anywhere around the robot to set a goal pose. Programmatically, `move_base` exposes multiple *actions* that can be called using a `SimpleActionClient` (see [here](http://wiki.ros.org/navigation/Tutorials/SendingSimpleGoals) for a simple tutorial). These *actions* also provide feedback on ongoing goals and a final status after an action is finished/aborted.
