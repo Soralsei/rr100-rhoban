@@ -299,6 +299,8 @@ This package, like [rr100_slam](#rr100_slam) wraps `slam_toolbox`, is a wrapper 
 
 Currently, only one configuration of this package is in use (`ekf_odom.launch` and `ekf_odom.yaml`) which handles localization in the odometric frame. However, another configuration is available which would handle global localization data fusion by fusing global positioning data from `slam_toolbox` and from another global position package like `amcl` or `gmcl`.
 
+This odometric frame data fusion configuration uses an Extended Kalman Filter (or EKF) to estimate the robot's pose by fusing IMU data (specifically angular acceleration) and raw wheel-encoder odometry (and specifically linear velocities and yaw velocity).
+
 #### Configuration
 The configuration for localization in the odometry frame is based a template EKF configuration file (`ekf.yaml`) located in the original repository for `robot_localization` on the `noetic-devel` branch. Our configuration file uses mostly default values except on values that directly relate to our RR100 robot or our use case, namely :
 - `two_d_mode` => `true`
@@ -323,6 +325,14 @@ The configuration for localization in the odometry frame is based a template EKF
 | Velocity         | false | false | false |
 | Angular velocity | true  | true  | true  |
 | Acceleration     | false | false | false |
+
+It is possible to tune the results of the data fusion by tweaking the covariance matrices parameters present in the configuration file but as the default values seemed to work fine, they were not tuned.
+
+The `ekf_odom.launch` configuration takes in two arguments:
+- `imu_topic`
+- `odom_topic`
+
+These two arguments are then used to remap the EKF node subscriptions (`/odom`and `/imu/data` initially) to whichever topic we want (in our case, this would be `/rr100_steering_controller/odom` and `/imu/data`). This is useful when simulating the robot, as the simulation package of the RR100 does not use the same naming scheme for topics as the real one.
 
 ### rr100_slam
 <div>
