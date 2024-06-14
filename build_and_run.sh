@@ -127,11 +127,10 @@ while getopts t:b:hi:rgc:a: option; do
     esac
 done
 
-# Dead code ?
-# if [ -z "$tag" ]; then
-#     echo "${RED}Error: missing image tag name${CLEAR}"
-#     usage
-# fi
+if [ -z "$tag" ]; then
+    echo "${RED}Error: missing image tag name${CLEAR}"
+    usage
+fi
 
 # Compute the SHA256 checksum of the files copied to the Docker image as well as the Dockerfile
 ## Uses perl to find raw COPY instructions (ie. copying build context files/dirs into the image)

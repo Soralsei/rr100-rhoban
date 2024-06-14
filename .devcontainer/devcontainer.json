@@ -7,8 +7,8 @@
 		"context": "..",
 		// Path to Dockerfile
 		"dockerfile": "../Dockerfile",
-		// "target": "simulation" // simulation | real
-		"target": "real" // simulation | real
+		"target": "simulation" // simulation | real
+		// "target": "real" // simulation | real
 	},
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
