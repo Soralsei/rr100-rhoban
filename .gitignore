@@ -4,3 +4,4 @@ build
 devel
 .catkin_workspace
 log
+*.pyc

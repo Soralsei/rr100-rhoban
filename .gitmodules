@@ -13,3 +13,6 @@
 [submodule "src/slam_toolbox"]
 	path = src/slam_toolbox
 	url = https://github.com/Soralsei/slam_toolbox.git
+[submodule "src/teb_local_planner"]
+	path = src/teb_local_planner
+	url = https://github.com/Soralsei/teb_local_planner.git

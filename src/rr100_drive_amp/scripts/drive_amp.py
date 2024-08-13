@@ -129,6 +129,6 @@ class DriveAmp():
         
         
 if __name__ == '__main__':
-    rospy.init_node('drive_amp', sys.argv, log_level=rospy.DEBUG)
+    rospy.init_node('drive_amp', sys.argv, log_level=rospy.INFO)
     amp = DriveAmp()
     rospy.spin()
