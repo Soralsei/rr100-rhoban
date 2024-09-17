@@ -115,7 +115,7 @@ user@machine:~/hello_world$ docker run -ti --name hello-container bash
 ## Project Dockerfile structure
 The Dockerfile for this project is structured in a multi-stage manner and inherits from the official Docker `ros:noetic` image. There are in total 3 building stages and 2 target stages in our building process. To optimize build times, we define 2 independent stages `apt-depends` and `cacher` that can be run in parallel by Docker's builder. The former stage's purpose is to download and install dependencies and useful packages for this project. This stage is later used as a base for our `builder` stage that will handle the actual building of this project.
 
-The latter stage (`cacher`) is used to cache `package.xml` files from our project's packages which declare these packages dependencies as they're less likely to change during development :
+The latter stage (`cacher`) is used to cache `package.xml` files from this project's packages which declare these packages dependencies as they're less likely to change during development :
 ```Dockerfile
 WORKDIR $WORKSPACE/src
 COPY src .
@@ -188,8 +188,6 @@ LABEL target=real
 
 ## Overview of the project
 ### Build and run script
-> [!NOTE]
-> Under construction
 <!-- 
 1. Parses passed arguments
 2. Check if user asked to rebuild
@@ -215,13 +213,13 @@ The script does a few things when run :
 
 A more specific explanation on what each part does is available as comments in the script.
 
-Another thing to mention is how the script actually compares builds. You may have noticed the use of labels in the previously described Dockerfile. These labels are used to identify our project's images and store the the hash the build context the image was built in. 
+Another thing to mention is how the script actually compares builds. You may have noticed the use of labels in the previously described Dockerfile. These labels are used to identify this project's images and store the the hash the build context the image was built in. 
 
 This hash is computed by the script by reading every `COPY` instruction in the Dockerfile from the host to the container and extracting the path to the copied files/directories and hashing all of their content with `sha256sum`. It is then  passed to the docker builder as a build argument and stored as a label (`rhoban.rr100.build.sha`).
 
 When comparing builds, the script uses a python program which extracts any label from the specified docker image and prints it out to standard output (which is captured by the calling shell script) if it exists.
 
-We also store the build target of each build in labels to check if the user changed build targets between consecutive builds. Finally, we also use labels to identify our project's docker images (in the format `"rhoban.image.name"="<name>"`) in order to avoid overwriting one of the user's unrelated docker image (in case they gave an already in-use image name corresponding to an unrelated Dockerfile)
+We also store the build target of each build in labels to check if the user changed build targets between consecutive builds. Finally, we also use labels to identify this project's docker images (in the format `"rhoban.image.name"="<name>"`) in order to avoid overwriting one of the user's unrelated docker image (in case they gave an already in-use image name corresponding to an unrelated Dockerfile)
 
 ### Package interaction
 This project makes use of many packages oriented towards autonomous robot navigation, many of which are standard in the ROS ecosystem. These packages all handle a different aspect of navigation, namely mapping, localizing, and path planning for the robot and we will go over how each of them works in a later section.
@@ -286,7 +284,7 @@ The `rslidar_laserscan` package, like mentioned in [Package interaction](#packag
 The `launch` directory contains every launch file used to configure and launch the nodes/nodelet. When running this package on a distant host, ie. *not* on the robot, it is recommended to use the `rslidar_laserscan_nodelet.launch` launch file. This launch file uses nodelets instead of nodes and registers the point cloud conversion nodelet on the robot's `rslidar_nodelet_manager`. This allows ROS to use *intra-process* communication as opposed to classic *inter-process* transfers that standalone nodes usually use, which results in much greater communication throughput.
 
 > [!NOTE]
-> As you may know, point cloud data structures that contain many points are usually quite large, and transferring these over the network at medium (~10Hz) frequencies would require a large portion of the available bandwidth, resulting in a global slow down of ROS.
+> As you may know, point cloud data structures that contain many points are usually quite heavy in number of bytes, and transferring these over the network at medium (~10Hz) frequencies would require a large portion of the available bandwidth, resulting in a global slow down of ROS.
 
 A custom node/nodelet was also implemented and can be used instead of the standard package but was found to be less effective at converting the point clouds than the standard one. However, this custom node is also dynamically reconfigurable and allows the user to choose a single ring from the LiDAR to use as a planar scan. This custom node can be launched using the provided launch file located at `launch/unofficial_rslidar_laserscan.launch` and `launch/unofficial_rslidar_laserscan_nodelet.launch`
 
@@ -295,7 +293,7 @@ To configure the package, a configuration file (`rslidar16_to_laserscan.yaml`) c
 
 ### rr100_localization
 
-This package, like [rr100_slam](#rr100_slam) wraps `slam_toolbox`, is a wrapper package around `robot_localization` which is a data fusion package aimed at localizing robots.
+This package, is a wrapper package around `robot_localization` which is a data fusion package aimed at localizing robots.
 
 Currently, only one configuration of this package is in use (`ekf_odom.launch` and `ekf_odom.yaml`) which handles localization in the odometric frame. However, another configuration is available which would handle global localization data fusion by fusing global positioning data from `slam_toolbox` and from another global position package like `amcl` or `gmcl`.
 
@@ -464,7 +462,7 @@ To launch the navigation stack on the real robot, you can use the launch file lo
 
 This launch file first launches the `ekf_odom` configuration of our `rr100_localization` package (while forwarding `imu_topic` and `odom_topic` arguments) for local state estimation which will be used in another layer of the stack. Then, if the user wants to generate a map, the launch file runs our `rr100_slam` package with the `slam_2d` configuration and else it runs the `localization_only` configuration.
 
-Next, the launch file runs the `move_base` package which will handle trajectory planning and following. `move_base` works by loading plugins that handle the different aspects of navigation like obstacle mapping and trajectory planning/executing. Currently, our project loads the following plugins for navigation :
+Next, the launch file runs the `move_base` package which will handle trajectory planning and following. `move_base` works by loading plugins that handle the different aspects of navigation like obstacle mapping and trajectory planning/executing. Currently, this project loads the following plugins for navigation :
 - For the global costmap :
   - `costmap_2d/StaticLayer` : TODO
   - `costmap_2d/InflationLayer` : TODO

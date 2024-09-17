@@ -192,7 +192,7 @@ GPU_ARGS=""
 if [ "$gpu"=true ]; then
     # Give access to all available GPUs to the container 
     # and run it in priviledged mode (so that it can access these GPUs)
-    GPU_ARGS="--gpus all --privileged"
+    GPU_ARGS="--gpus all --privileged --env NVIDIA_DRIVER_CAPABILITIES=all "
 fi
 
 
@@ -206,7 +206,7 @@ docker run --rm -ti \
     --net host \
     --env DISPLAY=$DISPLAY \
     --env QT_X11_NO_MITSHM=1 \
-    --env XAUTHORITY=$XAUTH \
+    --env XAUTHORITY=$XAUTHORITY \
     --volume "$XAUTH:$XAUTH" \
     --volume /tmp/.X11-unix/:/tmp/.X11-unix/ \
     --volume $HOME/.gazebo:/root/.gazebo/ \
