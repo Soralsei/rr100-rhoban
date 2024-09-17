@@ -10,6 +10,6 @@ resolution: 0.05
 
 plugins:
   # - { name: static_layer, type: "costmap_2d::StaticLayer" }
-  - { name: obstacles_layer, type: "costmap_2d::ObstacleLayer" }
-  # - { name: voxel_layer, type: "costmap_2d::VoxelLayer" }
-  - { name: inflation_layer, type: "costmap_2d::InflationLayer" }
+  # - { name: obstacles_layer,    type: "costmap_2d::ObstacleLayer" }
+  - { name: 3d_obstacle_layer,  type: "spatio_temporal_voxel_layer/SpatioTemporalVoxelLayer"}
+  # - { name: inflation_layer,    type: "costmap_2d::InflationLayer" }

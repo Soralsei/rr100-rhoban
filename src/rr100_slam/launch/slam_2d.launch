@@ -18,8 +18,14 @@
     <arg name="rslidar_laserscan_suffix" value=""
         unless="$(arg use_pointcloud_to_laserscan_nodelet)" />
 
+    <arg name="use_unofficial_node" default="true" />
+    <arg name="rslidar_laserscan_prefix" value="unofficial_"
+        if="$(arg use_unofficial_node)" />
+    <arg name="rslidar_laserscan_prefix" value=""
+        unless="$(arg use_unofficial_node)" />
+
     <include
-        file="$(find rslidar_laserscan)/launch/rslidar_laserscan$(arg rslidar_laserscan_suffix).launch">
+        file="$(find rslidar_laserscan)/launch/$(arg rslidar_laserscan_prefix)rslidar_laserscan$(arg rslidar_laserscan_suffix).launch">
         <arg name="nodelet_manager" value="$(arg nodelet_manager)"
             if="$(arg use_pointcloud_to_laserscan_nodelet)" />
         <arg name="laserscan_topic" value="$(arg laserscan_topic)" />
@@ -27,9 +33,9 @@
     </include>
 
     <include file="$(find rr100_slam)/launch/online_async.launch">
-        <arg name="localization_only" value="false"/>
-        <arg name="laserscan_topic" value="$(arg laserscan_topic)"/>
-        <arg name="map_resolution" value="$(arg map_resolution)"/>
+        <arg name="localization_only" value="false" />
+        <arg name="laserscan_topic" value="$(arg laserscan_topic)" />
+        <arg name="map_resolution" value="$(arg map_resolution)" />
         <arg name="map_path" value="$(arg map_path)" />
     </include>
 
