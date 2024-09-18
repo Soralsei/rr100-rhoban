@@ -7,5 +7,5 @@ update_frequency: 4.0
 
 plugins:
   - { name: static_layer, type: "costmap_2d::StaticLayer" }
-  # - { name: voxel_layer, type: "costmap_2d::VoxelLayer" }
+  - { name: 3d_obstacle_layer,  type: "spatio_temporal_voxel_layer/SpatioTemporalVoxelLayer"}
   - { name: inflation_layer, type: "costmap_2d::InflationLayer" }

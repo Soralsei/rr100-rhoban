@@ -21,6 +21,8 @@ TebLocalPlannerROS:
   exact_arc_length: False
   feasibility_check_no_poses: 5
   publish_feedback: False
+  control_look_ahead_poses: 1
+  prevent_look_ahead_poses_near_goal: 1
  
   # Robot
   max_vel_x: 0.6              # m/s
@@ -29,11 +31,11 @@ TebLocalPlannerROS:
   max_vel_theta: 1.0          # rad/s
   acc_lim_x: 6.0              # m/s²
   acc_lim_theta: 0.5          # rad/s²
-  max_steering_rate: 0.5      # No idea what unit this is
+  max_steering_rate: 5.0      # No idea what unit this is, rad/s² ?
 
   # ********************** Carlike robot parameters ********************
   min_turning_radius: 0.60        # meters
-  wheelbase: 0.25                 # Wheelbase of our robot in meters
+  wheelbase: 0.265                # Wheelbase of our robot in meters
   cmd_angle_instead_rotvel: False # stage simulator takes the angle instead of the rotvel as input (twist message)
   # ********************************************************************
 
@@ -49,8 +51,8 @@ TebLocalPlannerROS:
     vertices: [
         [0.5, 0.32925],
         [0.5, -0.32925],
-        [-0.45981, -0.32925],
-        [-0.45981, 0.32925],
+        [-0.5, -0.32925],
+        [-0.5, 0.32925],
       ] # for type "polygon"
 
   # Goal Tolerance

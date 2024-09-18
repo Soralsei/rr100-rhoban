@@ -8,6 +8,8 @@
     <arg name="use_pointcloud_nodelets" default="true" />
     <arg name="nodelet_manager" default="rslidar_nodelet_manager" doc="Nodelet manager name" />
 
+    <arg name="use_unofficial_laserscan_converter" default="false" />
+
     <arg name="imu_topic" default="/imu/data" doc="The topic in which the IMU data is published" />
     <arg name="odom_topic" default="/rr100_steering_controller/odom"
         doc="The topic in which the robot's odometry data is published" />
@@ -33,7 +35,7 @@
     <arg name="generate_map" default="true" />
     <arg name="map_resolution" default="0.05" doc="Map cell resolution" />
     <arg name="map_path" default="$(find rr100_navigation)/maps/map.posegraph"
-    doc="Map (posegraph format) file path" />
+        doc="Map (posegraph format) file path" />
 
     <arg name="global_costmap_width" default="100.0"
         doc="Global costmap width (in meters) if no static map is specified" />
@@ -55,10 +57,11 @@
             <arg name="use_pointcloud_to_laserscan_nodelet"
                 value="$(arg use_pointcloud_nodelets)" />
             <arg name="nodelet_manager" value="$(arg nodelet_manager)" />
-            
+            <arg name="use_unofficial_node" value="$(arg use_unofficial_laserscan_converter)" />
+
             <arg name="laserscan_topic" value="$(arg laserscan_topic)" />
             <arg name="pointcloud_topic" value="$(arg pointcloud_topic)" />
-            
+
             <arg name="map_path" value="$(arg map_path)" />
             <arg name="map_resolution" value="$(arg map_resolution)" />
 
@@ -72,12 +75,13 @@
             <arg name="use_pointcloud_to_laserscan_nodelet"
                 value="$(arg use_pointcloud_nodelets)" />
             <arg name="nodelet_manager" value="$(arg nodelet_manager)" />
-            
+            <arg name="use_unofficial_node" value="$(arg use_unofficial_laserscan_converter)" />
+
             <arg name="laserscan_topic" value="$(arg laserscan_topic)" />
             <arg name="pointcloud_topic" value="$(arg pointcloud_topic)" />
-            
+
             <arg name="map_resolution" value="$(arg map_resolution)" />
-            <arg name="map_path" value="$(arg map_path)" if="$(arg use_static_map)"/>
+            <arg name="map_path" value="$(arg map_path)" if="$(arg use_static_map)" />
 
             <arg name="simulated" value="$(arg simulated)" />
             <arg name="use_rviz" value="false" />
@@ -87,32 +91,35 @@
     <include file="$(find rr100_navigation)/launch/move_base.launch">
         <arg name="use_static_map" value="$(arg use_static_map)" />
 
-        <arg name="cmd_vel_topic" value="$(arg cmd_vel_topic)" />
+        <arg name="cmd_vel_topic"
+            value="$(arg cmd_vel_topic)" />
         <arg name="scan_topic" value="$(arg laserscan_topic)" />
-        <arg name="odom_topic" value="/odometry/filtered" />
-s
-        <!-- <arg name="cam_point_cloud_enabled" value="$(arg cam_point_cloud_enabled)" />
+        <arg
+            name="odom_topic" value="/odometry/filtered" /> s <!-- <arg
+        name="cam_point_cloud_enabled" value="$(arg cam_point_cloud_enabled)" />
         <arg name="cam_point_cloud_topic" value="$(arg cam_point_cloud_topic)" /> -->
 
-        <arg name="global_costmap_width" value="$(arg global_costmap_width)" />
-        <arg name="global_costmap_height" value="$(arg global_costmap_height)" />
+        <arg name="global_costmap_width"
+            value="$(arg global_costmap_width)" />
+        <arg name="global_costmap_height"
+            value="$(arg global_costmap_height)" />
     </include>
 
     <include file="$(find rr100_drive_amp)/launch/drive_amp.launch">
-        <arg name="twist_in" value="$(arg cmd_vel_topic)"/>
-        <arg name="odom_in" value="/odometry/filtered"/>
-        
-        <arg name="twist_out" value="corrected_cmd_vel"/>
+        <arg name="twist_in" value="$(arg cmd_vel_topic)" />
+        <arg name="odom_in" value="/odometry/filtered" />
+
+        <arg name="twist_out" value="corrected_cmd_vel" />
     </include>
 
-    <node pkg="nodelet" type="nodelet" name="velocity_smoother_nodelet_manager" args="manager"/>
+    <node pkg="nodelet" type="nodelet" name="velocity_smoother_nodelet_manager" args="manager" />
 
     <include file="$(find yocs_velocity_smoother)/launch/velocity_smoother.launch">
-        <arg name="nodelet_manager_name" value="velocity_smoother_nodelet_manager"/>
-        <arg name="config_file"           value="$(find yocs_velocity_smoother)/param/rr100_smoother.yaml"/>
-        <arg name="raw_cmd_vel_topic"     value="corrected_cmd_vel"/>
-        <arg name="smooth_cmd_vel_topic"  value="cmd_vel"/>
-        <arg name="odom_topic"            value="/odometry/filtered"/>
+        <arg name="nodelet_manager_name" value="velocity_smoother_nodelet_manager" />
+        <arg name="config_file" value="$(find yocs_velocity_smoother)/param/rr100_smoother.yaml" />
+        <arg name="raw_cmd_vel_topic" value="corrected_cmd_vel" />
+        <arg name="smooth_cmd_vel_topic" value="cmd_vel" />
+        <arg name="odom_topic" value="/odometry/filtered" />
     </include>
 
     <node name="rviz" type="rviz" pkg="rviz"
