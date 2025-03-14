@@ -86,16 +86,15 @@ class DriveAmp():
             self.pub.publish(target)
             return
         
-        if np.allclose(target, 0, atol=1e-5): 
-            self.target = np.zeros((2, 3), dtype=np.float32)
-            message = Twist()
-            self.pub.publish(message)
-            return
-        
-        
         linear, angular, _ = conversion.kinematics_with_covariance_to_numpy(odometry.twist)
         with self.receive_lock:
+            if np.allclose(target, 0, atol=1e-5): 
+                self.target = np.zeros((2, 3), dtype=np.float32)
+                message = Twist()
+                self.pub.publish(message)
+                return
             self.current = np.reshape(np.concatenate((linear, angular)), (2, 3))
+        
             
         dt = (current_time - self.previous_time).to_sec()
         

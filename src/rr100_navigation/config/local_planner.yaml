@@ -29,8 +29,8 @@ TebLocalPlannerROS:
   max_vel_x_backwards: 0.6    # m/s
   max_vel_y: 0.0              # m/s
   max_vel_theta: 1.0          # rad/s
-  acc_lim_x: 6.0              # m/s²
-  acc_lim_theta: 0.5          # rad/s²
+  acc_lim_x: 3.0              # m/s²
+  acc_lim_theta: 0.35          # rad/s²
   max_steering_rate: 5.0      # No idea what unit this is, rad/s² ?
 
   # ********************** Carlike robot parameters ********************
