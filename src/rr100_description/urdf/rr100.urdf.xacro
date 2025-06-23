@@ -26,8 +26,8 @@
   <xacro:property name="wheel_x_offset" value="0.0" />
   <xacro:property name="wheel_y_offset" value="0.0" />
 
-  <xacro:property name="wheelbase" value="0.600" />
-  <xacro:property name="track" value="0.500" />
+  <xacro:property name="wheelbase" value="0.500" />
+  <xacro:property name="track" value="0.600" />
 
   <xacro:chassis/>
 
@@ -71,7 +71,7 @@
 
     <xacro:include filename="$(find robosense_description)/urdf/RS-16.urdf.xacro"/>
     <xacro:RS-16 parent="base_link" name="rslidar" topic="/rslidar_points" hz="20" samples="2625" gpu="${gpu}">
-        <origin xyz="0.032 0 0.40" rpy="0.0 0.0 0.0" />
+        <origin xyz="0 0 0.416" rpy="0.0 0.0 0.0" />
     </xacro:RS-16>
   </xacro:if>
 

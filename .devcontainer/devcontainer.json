@@ -7,7 +7,8 @@
 		"context": "..",
 		// Path to Dockerfile
 		"dockerfile": "../Dockerfile",
-		"target": "simulation" // simulation | real
+		"target": "simulation", // simulation | real
+		"args": {"progress":"plain"}
 		// "target": "real" // simulation | real
 	},
 	// Features to add to the dev container. More info: https://containers.dev/features.
@@ -37,8 +38,8 @@
 	"runArgs": [
 		"--net=host",
 		"--gpus=all",
-		// "--name=ros-sim"
-		"--name=ros-real"
+		"--name=ros-sim"
+		// "--name=ros-real"
 	],
 	"containerEnv": {
 		"DISPLAY": "${localEnv:DISPLAY}",

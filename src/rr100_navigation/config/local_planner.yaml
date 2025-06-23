@@ -23,19 +23,19 @@ TebLocalPlannerROS:
   publish_feedback: False
   control_look_ahead_poses: 1
   prevent_look_ahead_poses_near_goal: 1
- 
+
   # Robot
-  max_vel_x: 0.6              # m/s
-  max_vel_x_backwards: 0.6    # m/s
-  max_vel_y: 0.0              # m/s
-  max_vel_theta: 1.0          # rad/s
-  acc_lim_x: 3.0              # m/s²
-  acc_lim_theta: 0.35          # rad/s²
-  max_steering_rate: 5.0      # No idea what unit this is, rad/s² ?
+  max_vel_x: 0.6 # m/s
+  max_vel_x_backwards: 0.6 # m/s
+  max_vel_y: 0.0 # m/s
+  max_vel_theta: 1.0 # rad/s
+  acc_lim_x: 3.0 # m/s²
+  acc_lim_theta: 0.35 # rad/s²
+  max_steering_rate: 5.0 # No idea what unit this is, rad/s² ?
 
   # ********************** Carlike robot parameters ********************
-  min_turning_radius: 0.60        # meters
-  wheelbase: 0.265                # Wheelbase of our robot in meters
+  min_turning_radius: 0.60 # meters
+  wheelbase: 0.25 # Wheelbase of our robot in meters
   cmd_angle_instead_rotvel: False # stage simulator takes the angle instead of the rotvel as input (twist message)
   # ********************************************************************
 
@@ -69,7 +69,7 @@ TebLocalPlannerROS:
   obstacle_poses_affected: 15
 
   dynamic_obstacle_inflation_dist: 0.4
-  include_dynamic_obstacles: True 
+  include_dynamic_obstacles: True
 
   costmap_converter_plugin: "costmap_converter::CostmapToPolygonsDBSMCCH"
   costmap_converter_spin_thread: True
