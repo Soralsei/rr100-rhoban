@@ -1,18 +1,3 @@
-[submodule "src/rslidar_laserscan"]
-	path = src/rslidar_laserscan
-	url = https://github.com/Soralsei/rslidar_laserscan.git
-[submodule "src/realsense-ros"]
-	path = src/realsense-ros
-	url = https://github.com/Soralsei/realsense-ros.git
-[submodule "src/realsense_gazebo_plugin"]
-	path = src/realsense_gazebo_plugin
-	url = https://github.com/Soralsei/realsense_gazebo_plugin.git
-[submodule "src/robosense_simulator"]
-	path = src/robosense_simulator
-	url = https://github.com/tomlogan501/robosense_simulator.git
-[submodule "src/slam_toolbox"]
-	path = src/slam_toolbox
-	url = https://github.com/Soralsei/slam_toolbox.git
-[submodule "src/teb_local_planner"]
-	path = src/teb_local_planner
-	url = https://github.com/Soralsei/teb_local_planner.git
+[submodule "src/rr100_packages"]
+	path = src/rr100_packages
+	url = https://github.com/Soralsei/rr100_packages.git

@@ -5,11 +5,9 @@
 	"build": {
 		// Sets the run context to one level up instead of the .devcontainer folder.
 		"context": "..",
+		"args": {"progress": "plain"},
 		// Path to Dockerfile
-		"dockerfile": "../Dockerfile",
-		"target": "simulation", // simulation | real
-		"args": {"progress":"plain"}
-		// "target": "real" // simulation | real
+		"dockerfile": "../Dockerfile"
 	},
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
@@ -32,13 +30,12 @@
 	},
 	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "devcontainer"
-	"workspaceMount": "source=${localWorkspaceFolder},target=/opt/ros/rr100_ws,type=bind,consistency=cached",
-	"workspaceFolder": "/opt/ros/rr100_ws",
+	"workspaceMount": "source=${localWorkspaceFolder},target=/home/ubuntu/rr100_ws,type=bind,consistency=cached",
+	"workspaceFolder": "/home/ubuntu/rr100_ws",
 	"privileged": true,
 	"runArgs": [
 		"--net=host",
-		"--gpus=all",
-		"--name=ros-sim"
+		"--gpus=all"
 		// "--name=ros-real"
 	],
 	"containerEnv": {

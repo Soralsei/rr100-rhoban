@@ -1,140 +1,70 @@
-ARG WORKSPACE=/opt/ros/rr100_ws
-ARG FROM_IMAGE=ros:noetic
-ARG IP=192.168.0.64
-ARG BUILD_SHA
+FROM osrf/ros:noetic-desktop-full
 
-# Cache apt dependencies
-FROM $FROM_IMAGE as apt-depends
-LABEL "rhoban.project.name"="rhoban-rr100" \
-"author"="Kohio Deflesselle"
+SHELL ["/bin/bash", "--login", "-c"] 
 
-ENV PATH="/root/miniconda3/condabin:${PATH}"
-# ARG PATH="/root/miniconda3/bin:${PATH}"
+# Add ubuntu user with same UID and GID as your host system, if it doesn't already exist
+# Since Ubuntu 24.04, a non-root user is created by default with the name vscode and UID=1000
+ARG USERNAME=ubuntu
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+RUN if ! id -u $USER_UID >/dev/null 2>&1; then \
+        groupadd --gid $USER_GID $USERNAME && \
+        useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME; \
+    fi
 
-RUN --mount=type=cache,target=/var/cache/apt \
-DEBIAN_FRONTEND=noninteractive apt-get update && apt-get upgrade -y && apt-get install --no-install-recommends -y \
-wget libpcl-dev libmodbus5 libpcap0.8 \
-ros-${ROS_DISTRO}-tf2-tools \
+# Add sudo support for the non-root user
+RUN apt-get update && \
+    apt-get install -y sudo && \
+    echo "$USERNAME ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME && \
+    chmod 0440 /etc/sudoers.d/$USERNAME
+
+# Switch from root to user
+USER $USERNAME
+
+# Add user to video group to allow access to webcam
+RUN sudo usermod --append --groups video $USERNAME
+
+# Update all packages
+RUN DEBIAN_FRONTEND=noninteractive sudo apt update \
+&& sudo apt upgrade -y \
+&& sudo apt install -y --no-install-recommends -y \
+wget libpcl-dev libmodbus5 libpcap0.8 git ros-${ROS_DISTRO}-tf2-tools \
+python-is-python3 \
 ros-${ROS_DISTRO}-rqt \
 ros-${ROS_DISTRO}-rqt-common-plugins \
 ros-${ROS_DISTRO}-rqt-robot-plugins \
-ros-${ROS_DISTRO}-image-transport-plugins \
-&& rm -rf /var/lib/apt/lists/* 
+ros-${ROS_DISTRO}-image-transport-plugins
 
-# Caching stage
-FROM $FROM_IMAGE AS cacher
-ARG WORKSPACE
+# Rosdep update
+RUN rosdep update --rosdistro ${ROS_DISTRO}
 
-WORKDIR $WORKSPACE/src
-COPY src .
+# Source the ROS setup file
+RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
 
-# Separate package.xml files in /tmp directory
-WORKDIR /opt
-RUN mkdir -p /tmp/opt && \
-find . -name "package.xml" | \
-xargs cp --parents -t /tmp/opt && \
-find . -name "CATKIN_IGNORE" | \
-xargs cp --parents -t /tmp/opt || true
+################################
+## ADD ANY CUSTOM SETUP BELOW ##
+################################
 
-# Hacky way to compile everything separately in later stage
-## Should find better way to partition everything
-## Here, any package in src/ that doesn't have 'rr100' 
-## and 'simulator' in its name is treated as a dependency
-WORKDIR $WORKSPACE/src
-RUN mkdir ../dependencies \
-&& ls | grep -v 'rhoban\|rr100\|simulator\|CMake' | xargs mv -t ../dependencies \
-&& mv ../dependencies .
-RUN mkdir ../packages \
-&& ls | grep -v 'dependencies\|gazebo\|simulator\|CMake' | xargs mv -t ../packages \
-&& mv ../packages .
-RUN mkdir ../simulation \
-&& ls | grep -v 'dependencies\|packages\|CMake' | xargs mv -t ../simulation \
-&& mv ../simulation .
-
-
-#Building stage
-FROM apt-depends as builder
-ARG WORKSPACE
-
-WORKDIR ${WORKSPACE}
-
-# Install RR100 ros packages
-COPY debfiles/* ./debfiles/
-RUN python3 debfiles/deploy_debians_noetic.py debfiles
-
-# Install all workspace packages dependencies
-COPY --from=cacher /tmp/$WORKSPACE/src ./src
-RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
-&& apt-get update \
-&& rosdep update \
-&& rosdep install -r -y --from-paths ./src --ignore-src --rosdistro ${ROS_DISTRO} \
-&& apt-get upgrade -y \
-&& rm -rf /var/lib/apt/lists/*
-
-# Copy files from cacher stage
-COPY --from=cacher $WORKSPACE/src/ .
-
-# Compile dependencies as separate layer for better cache
-RUN mv CMakeLists.txt src \
-    && . /opt/ros/${ROS_DISTRO}/setup.sh \
-    && cp -r dependencies/* src \
-    && ls dependencies | xargs -n 1 basename | xargs catkin_make --only-pkg-with-deps \
-    && rm -rf dependencies
-
-# Compile actual RR100 project packages
-RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
-    && cp -r packages/* src \
-    && ls packages | xargs -n 1 basename | xargs catkin_make --only-pkg-with-deps \
-    && rm -rf packages
-
-RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
-    && cp -r simulation/* src \
-    && ls -lar simulation/ \
-    && ls -lar src/rr100_description \
-    && ls simulation | xargs -n 1 basename | xargs catkin_make --only-pkg-with-deps \
-    && rm -rf simulation
-
-ENV WORKSPACE=$WORKSPACE
-RUN sed --in-place --expression \
-    '$isource "$WORKSPACE/devel/setup.bash"' \
-    /ros_entrypoint.sh \
-    && echo "source ${WORKSPACE}/devel/setup.bash" >> ~/.bashrc
-
-COPY Dockerfile .
-
-ARG BUILD_SHA
-LABEL "rhoban.rr100.build.sha"=${BUILD_SHA}
+WORKDIR /home/ubuntu
 
 # Create conda env for zmq rl_controller
-RUN arch=$(uname -m) && \
+RUN  echo $(pwd) && arch=$(uname -m) && \
 if [ "$arch" = "x86_64" ]; then \
-MINICONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"; \
+    MINICONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"; \
 elif [ "$arch" = "aarch64" ]; then \
-MINICONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh"; \
+    MINICONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh"; \
 else \
-echo "Unsupported architecture: $arch"; \
-exit 1; \
+    echo "Unsupported architecture: $arch"; \
+    exit 1; \
 fi && \
 wget $MINICONDA_URL -O miniconda.sh && \
-mkdir -p /root/.conda && \
-bash miniconda.sh -b -p /root/miniconda3 && \
-rm -f miniconda.sh 
-RUN conda init && . ~/.bashrc && conda create -n rl python=3.10 -y \
-&& conda activate rl \
-&& pip install sbx-rl zmq stable-baselines3 \
-&& conda deactivate \
+mkdir -p ${HOME}/.conda && \
+bash miniconda.sh -b -p ${HOME}/miniconda3 && \
+rm -f miniconda.sh
+
+ENV PATH=/home/ubuntu/miniconda3/bin:$PATH
+
+RUN conda init
+RUN conda create -n rl python=3.10 -y \
+&& conda run -n rl pip install sbx-rl zmq stable-baselines3 \
 && conda config --set auto_activate_base false
-
-FROM builder as simulation
-ENV ROS_MASTER_URI=http://localhost:11311
-
-# Do not remove, used to identify build target
-LABEL target="simulation"
-
-FROM builder as real
-ARG IP
-ENV ROS_MASTER_URI=http://rr-100-07:11311
-ENV ROS_IP=${IP}
-
-# Do not remove, used to identify build target
-LABEL target="real"
