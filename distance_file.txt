@@ -11,3 +11,9 @@ Goal (frame: odom): ((0.0, 0.0, 0.0)) | total distance: 1.0765354694322633
 [<class 'rr100_trajectory_tracking.rl_tracker.GoToGoalTracker'>] Goal (frame: odom) = ((1.0, 0.0, 0.0)) | total distance: 0.7271737320719035
 [<class 'rr100_trajectory_tracking.move_base_tracker.MoveBaseTracker'>] Goal (frame: ) = ((1.0, 0.0, 0.0)) | total distance: 0.9975826401690997
 [<class 'rr100_trajectory_tracking.move_base_tracker.MoveBaseTracker'>] Goal (frame: ) = ((1.0, 0.0, 0.0)) | total distance: 3.162154971798006
+[<class 'rr100_trajectory_tracking.move_base_tracker.MoveBaseTracker'>] Goal (frame: ) = ((0.25, 0.0, 0.0)) | total distance: 0.26767549675470265
+[<class 'rr100_trajectory_tracking.move_base_tracker.MoveBaseTracker'>] Goal (frame: ) = ((-0.25, 0.0, 0.0)) | total distance: 0.2673945368972408
+[<class 'rr100_trajectory_tracking.rl_tracker.GoToGoalTracker'>] Goal (frame: base_footprint) = ((0.25, 0.0, 0.0)) | total distance: 0.0895454613337727
+[<class 'rr100_trajectory_tracking.rl_tracker.GoToGoalTracker'>] Goal (frame: base_footprint) = ((0.15, 0.0, 0.0)) | total distance: 0.0
+[<class 'rr100_trajectory_tracking.rl_tracker.GoToGoalTracker'>] Goal (frame: base_footprint) = ((0.2, 0.0, 0.0)) | total distance: 0.007485529429556503
+[<class 'rr100_trajectory_tracking.rl_tracker.GoToGoalTracker'>] Goal (frame: base_footprint) = ((0.25, 0.0, 0.0)) | total distance: 0.09615598982178214
