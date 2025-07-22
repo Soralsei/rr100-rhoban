@@ -62,9 +62,14 @@ mkdir -p ${HOME}/.conda && \
 bash miniconda.sh -b -p ${HOME}/miniconda3 && \
 rm -f miniconda.sh
 
-ENV PATH=/home/ubuntu/miniconda3/bin:$PATH
+COPY requirements_rl.txt .
 
-RUN conda init
-RUN conda create -n rl python=3.10 -y \
-&& conda run -n rl pip install sbx-rl zmq stable-baselines3 \
-&& conda config --set auto_activate_base false
+RUN $HOME/miniconda3/bin/conda init \
+&& $HOME/miniconda3/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main \ 
+&& $HOME/miniconda3/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+RUN $HOME/miniconda3/bin/conda create -n rl python=3.10 -y \
+&& $HOME/miniconda3/bin/conda run -n rl pip install -r requirements_rl.txt \
+&& $HOME/miniconda3/bin/conda run -n rl pip install zmq \
+&& $HOME/miniconda3/bin/conda config --set auto_activate_base false
+
+RUN echo "source $HOME/rr100_ws/devel/setup.bash" >> $HOME/.bashrc
